@@ -86,7 +86,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
 					}
 				}
 			);
-			cookies = await updateCookies(respdata.headers['set-cookie'] || [], server);
+			cookies = updateCookies(respdata.headers['set-cookie'] || [], server);
 			if (respdata.status === 202) {
 				// The schema is being recalculated so we need to make another call to get it
 				respdata = await axios.request(
@@ -100,7 +100,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
 						}
 					},
 				);
-				await updateCookies(respdata.headers['set-cookie'] || [], server);
+				updateCookies(respdata.headers['set-cookie'] || [], server);
 				return respdata;
 			}
 			else if (respdata.status === 304) {
@@ -125,7 +125,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
   						httpsAgent
 					}
 				);
-				cookies = await updateCookies(respdata.headers['set-cookie'] || [], server);
+				cookies = updateCookies(respdata.headers['set-cookie'] || [], server);
 				if (respdata.status === 202) {
 					// The schema is being recalculated so we need to make another call to get it
 					respdata = await axios.request(
@@ -139,7 +139,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
 							}
 						}
 					);
-					await updateCookies(respdata.headers['set-cookie'] || [], server);
+					updateCookies(respdata.headers['set-cookie'] || [], server);
 					return respdata;
 				}
 				else if (respdata.status === 304) {
@@ -197,7 +197,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
 						}
 					);
 				}
-				await updateCookies(respdata.headers['set-cookie'] || [], server);
+				updateCookies(respdata.headers['set-cookie'] || [], server);
 			}
 			else {
 				respdata = await axios.request(
@@ -232,7 +232,7 @@ export async function makeRESTRequest(method: "GET"|"POST"|"HEAD", api: number, 
 						}
 					);
 				}
-				await updateCookies(respdata.headers['set-cookie'] || [], server);
+				updateCookies(respdata.headers['set-cookie'] || [], server);
 			}
 			return respdata;
 		}
