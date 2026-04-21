@@ -45,13 +45,13 @@ export function updateCookies(newCookies: string[], server: ServerSpec): string[
 	const key = `${server.username}@${server.host}:${server.port}${server.pathPrefix}`;
 	const cookies = cookiesCache.get(key) ?? [];
 	newCookies.forEach((cookie) => {
-	  const [cookieName] = cookie.split("=");
-	  const index = cookies.findIndex((el) => el.startsWith(cookieName));
-	  if (index >= 0) {
-		cookies[index] = cookie;
-	  } else {
-		cookies.push(cookie);
-	  }
+		const [cookieName] = cookie.split("=");
+		const index = cookies.findIndex((el) => el.startsWith(cookieName));
+		if (index >= 0) {
+			cookies[index] = cookie;
+		} else {
+			cookies.push(cookie);
+		}
 	});
 	cookiesCache.set(key, cookies);
 	return cookies;
@@ -68,7 +68,7 @@ let serverManagerApi: serverManager.ServerManagerAPI;
 const wsFolderServerSpecs: Map<string, ServerSpec> = new Map();
 
 type MakeRESTRequestParams = {
-	method: "GET"|"POST";
+	method: "GET" | "POST";
 	api: number;
 	path: string;
 	server: ServerSpec;
@@ -83,16 +83,16 @@ export async function activate(context: ExtensionContext) {
 	objectScriptApi = objectScriptExt.isActive ? objectScriptExt.exports : await objectScriptExt.activate();
 
 	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(
+	const serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')
 	);
 	// The debug options for the server
 	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-	let debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
+	const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] };
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
-	let serverOptions: ServerOptions = {
+	const serverOptions: ServerOptions = {
 		run: { module: serverModule, transport: TransportKind.ipc },
 		debug: {
 			module: serverModule,
@@ -130,7 +130,7 @@ export async function activate(context: ExtensionContext) {
 	});
 
 	// Options to control the language client
-	let clientOptions: LanguageClientOptions = {
+	const clientOptions: LanguageClientOptions = {
 		// Register the server for InterSystems files handled by vscode-objectscript extension
 		documentSelector: documentSelector,
 		// Register middleware for embedded language request forwarding
@@ -159,10 +159,10 @@ export async function activate(context: ExtensionContext) {
 		// The server manager extension is installed
 		serverManagerApi = serverManagerExt.isActive ? serverManagerExt.exports : await serverManagerExt.activate();
 		serverManagerApi.onDidChangePassword()((serverName: string) => {
-			for (const [k,v] of wsFolderServerSpecs.entries()) {
+			for (const [k, v] of wsFolderServerSpecs.entries()) {
 				if (v.serverName == serverName) wsFolderServerSpecs.delete(k);
 			}
-			client.sendNotification("intersystems/server/passwordChange",serverName);
+			client.sendNotification("intersystems/server/passwordChange", serverName);
 		});
 	}
 
@@ -172,7 +172,7 @@ export async function activate(context: ExtensionContext) {
 		client.onRequest("intersystems/server/resolveFromUri", async (uri: string) => {
 			const uriObj = Uri.parse(uri);
 			const wsFolderUriString = workspace.getWorkspaceFolder(uriObj)?.uri.toString();
-			let serverSpec = objectScriptApi.serverForUri(uriObj);
+			const serverSpec = objectScriptApi.serverForUri(uriObj);
 			if (
 				// Server was resolved
 				serverSpec.host !== "" &&
@@ -184,7 +184,7 @@ export async function activate(context: ExtensionContext) {
 				typeof serverSpec.password === "undefined" &&
 				// A supported version of the Server Manager is installed
 				serverManagerExt != undefined &&
-				gt(serverManagerExt.packageJSON.version,"3.0.0")
+				gt(serverManagerExt.packageJSON.version, "3.0.0")
 			) {
 				// The main extension didn't provide a password, so we must 
 				// get it from the server manager's authentication provider.
@@ -220,7 +220,7 @@ export async function activate(context: ExtensionContext) {
 			return newuri.toString();
 		}),
 		client.onRequest("intersystems/uri/forDocument", (document: string): string | null => {
-			if (lte(objectScriptExt.packageJSON.version,"1.0.10")) {
+			if (lte(objectScriptExt.packageJSON.version, "1.0.10")) {
 				// If the active version of vscode-objectscript doesn't expose
 				// DocumentContentProvider.getUri(), just return the empty string.
 				return "";
@@ -259,13 +259,13 @@ export async function activate(context: ExtensionContext) {
 						uriParams.has("csp") && ["", "1"].includes(uriParams.get("csp") ?? "")
 							? uri.path.slice(1)
 							: uri.path.split("/").slice(1).join(".");
-					const docParams = 
+					const docParams =
 						params.server.apiVersion >= 4 && workspace.getConfiguration("objectscript",
 							workspace.workspaceFolders?.find((f) => f.name.toLowerCase() == uri.authority.toLowerCase())
 						).get<boolean>("multilineMethodArgs")
 							? { format: "udl-multiline" }
 							: undefined;
-					const resp = await makeRESTRequest("GET",1,`/doc/${fileName}`,params.server,undefined,undefined,docParams);
+					const resp = await makeRESTRequest("GET", 1, `/doc/${fileName}`, params.server, undefined, undefined, docParams);
 					return resp?.data?.result?.content || [];
 				} else {
 					// Read the contents of the file at uri
@@ -278,18 +278,18 @@ export async function activate(context: ExtensionContext) {
 		}),
 
 		// Register commands
-		commands.registerCommand("intersystems.language-server.overrideClassMembers",overrideClassMembers),
-		commands.registerCommand("intersystems.language-server.selectParameterType",selectParameterType),
-		commands.registerCommand("intersystems.language-server.selectImportPackage",selectImportPackage),
-		commands.registerCommand("intersystems.language-server.extractMethod",extractMethod),
-		commands.registerCommand("intersystems.language-server.showSymbolInClass",showSymbolInClass),
-		commands.registerTextEditorCommand("intersystems.language-server.setSelection",setSelection),
+		commands.registerCommand("intersystems.language-server.overrideClassMembers", overrideClassMembers),
+		commands.registerCommand("intersystems.language-server.selectParameterType", selectParameterType),
+		commands.registerCommand("intersystems.language-server.selectImportPackage", selectImportPackage),
+		commands.registerCommand("intersystems.language-server.extractMethod", extractMethod),
+		commands.registerCommand("intersystems.language-server.showSymbolInClass", showSymbolInClass),
+		commands.registerTextEditorCommand("intersystems.language-server.setSelection", setSelection),
 
 		// Register EvaluatableExpressionProvider
-		languages.registerEvaluatableExpressionProvider(documentSelector,new ObjectScriptEvaluatableExpressionProvider()),
+		languages.registerEvaluatableExpressionProvider(documentSelector, new ObjectScriptEvaluatableExpressionProvider()),
 
 		// Register embedded language request forwarding content provider
-		workspace.registerTextDocumentContentProvider("isc-embedded-content",new ISCEmbeddedContentProvider())
+		workspace.registerTextDocumentContentProvider("isc-embedded-content", new ISCEmbeddedContentProvider())
 	);
 
 	// Start the client. This will also launch the server
@@ -312,10 +312,10 @@ export async function activate(context: ExtensionContext) {
 					"Don't Ask Again"
 				).then((answer) => {
 					if (answer === "Yes") {
-						workbenchConfig.update("colorTheme","InterSystems Default Light Modern",true);
+						workbenchConfig.update("colorTheme", "InterSystems Default Light Modern", true);
 					}
 					else if (answer === "Don't Ask Again") {
-						workspace.getConfiguration("intersystems.language-server").update("suggestTheme",false,true);
+						workspace.getConfiguration("intersystems.language-server").update("suggestTheme", false, true);
 					}
 				});
 			}
@@ -328,13 +328,13 @@ export async function activate(context: ExtensionContext) {
 					"Don't Ask Again"
 				).then((answer) => {
 					if (answer === "Globally") {
-						workbenchConfig.update("colorTheme","InterSystems Default Light Modern",true);
+						workbenchConfig.update("colorTheme", "InterSystems Default Light Modern", true);
 					}
 					else if (answer === "Only This Workspace") {
-						workbenchConfig.update("colorTheme","InterSystems Default Light Modern",false);
+						workbenchConfig.update("colorTheme", "InterSystems Default Light Modern", false);
 					}
 					else if (answer === "Don't Ask Again") {
-						workspace.getConfiguration("intersystems.language-server").update("suggestTheme",false,true);
+						workspace.getConfiguration("intersystems.language-server").update("suggestTheme", false, true);
 					}
 				});
 			}
@@ -347,10 +347,10 @@ export async function activate(context: ExtensionContext) {
 					"Don't Ask Again"
 				).then((answer) => {
 					if (answer === "Yes") {
-						workbenchConfig.update("colorTheme","InterSystems Default Dark Modern",true);
+						workbenchConfig.update("colorTheme", "InterSystems Default Dark Modern", true);
 					}
 					else if (answer === "Don't Ask Again") {
-						workspace.getConfiguration("intersystems.language-server").update("suggestTheme",false,true);
+						workspace.getConfiguration("intersystems.language-server").update("suggestTheme", false, true);
 					}
 				});
 			}
@@ -363,13 +363,13 @@ export async function activate(context: ExtensionContext) {
 					"Don't Ask Again"
 				).then((answer) => {
 					if (answer === "Globally") {
-						workbenchConfig.update("colorTheme","InterSystems Default Dark Modern",true);
+						workbenchConfig.update("colorTheme", "InterSystems Default Dark Modern", true);
 					}
 					else if (answer === "Only This Workspace") {
-						workbenchConfig.update("colorTheme","InterSystems Default Dark Modern",false);
+						workbenchConfig.update("colorTheme", "InterSystems Default Dark Modern", false);
 					}
 					else if (answer === "Don't Ask Again") {
-						workspace.getConfiguration("intersystems.language-server").update("suggestTheme",false,true);
+						workspace.getConfiguration("intersystems.language-server").update("suggestTheme", false, true);
 					}
 				});
 			}
