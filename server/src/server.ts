@@ -29,9 +29,10 @@ import { onDiagnostics } from './providers/diagnostic';
 import { onSemanticTokens, onSemanticTokensDelta } from './providers/semanticTokens';
 
 import { LanguageServerConfiguration, ServerSpec } from './utils/types';
-import { connection, documents, languageServerSettings, parsedDocuments, serverSpecs, tokenBuilders } from './utils/variables';
+import { analyzedDocuments, connection, documents, languageServerSettings, parsedDocuments, serverSpecs, tokenBuilders } from './utils/variables';
 import { parseDocument, getLegend } from './parse/parse';
 import { isolateEmbeddedLanguage, languageAtPosition } from './providers/requestForwarding';
+import { analyzeClass } from './analysis';
 
 connection.onInitialize(() => {
 	return {
@@ -39,12 +40,12 @@ connection.onInitialize(() => {
 			textDocumentSync: TextDocumentSyncKind.Full,
 			completionProvider: {
 				resolveProvider: true,
-				triggerCharacters: [".","$","("," ","<",'"',"#","^"]
+				triggerCharacters: [".", "$", "(", " ", "<", '"', "#", "^"]
 			},
 			hoverProvider: true,
 			definitionProvider: true,
 			signatureHelpProvider: {
-				triggerCharacters: ["(",","],
+				triggerCharacters: ["(", ","],
 				retriggerCharacters: [","]
 			},
 			documentFormattingProvider: true,
@@ -75,7 +76,7 @@ connection.onInitialize(() => {
 			typeHierarchyProvider: true,
 			diagnosticProvider: {
 				interFileDependencies: false,
-				workspaceDiagnostics: false
+				workspaceDiagnostics: false,
 			}
 		}
 	};
@@ -83,7 +84,7 @@ connection.onInitialize(() => {
 
 connection.onInitialized(() => {
 	// Register for relevant configuration changes.
-	connection.client.register(DidChangeConfigurationNotification.type, {section: ["intersystems.language-server","intersystems.servers","objectscript.conn"]});
+	connection.client.register(DidChangeConfigurationNotification.type, { section: ["intersystems.language-server", "intersystems.servers", "objectscript.conn"] });
 });
 
 connection.onExit(() => {
@@ -110,25 +111,33 @@ connection.onDidChangeConfiguration(async () => {
 
 documents.onDidClose(e => {
 	parsedDocuments.delete(e.document.uri);
+	analyzedDocuments.delete(e.document.uri);
 	tokenBuilders.delete(e.document.uri);
 	serverSpecs.delete(e.document.uri);
 	languageServerSettings.delete(e.document.uri);
-	connection.sendDiagnostics({uri: e.document.uri, diagnostics: []});
+	connection.sendDiagnostics({ uri: e.document.uri, diagnostics: [] });
 });
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(async change => {
 	// Clear the parsedDocuments value so we know to wait for an update elsewhere
-	parsedDocuments.set(change.document.uri,undefined);
+	parsedDocuments.set(change.document.uri, undefined);
+	analyzedDocuments.set(change.document.uri, undefined);
 	const path = URI.parse(change.document.uri).path;
 	parsedDocuments.set(
 		change.document.uri,
 		parseDocument(
 			change.document.languageId,
-			path.slice(path.lastIndexOf(".")+1).toLowerCase(),
+			path.slice(path.lastIndexOf(".") + 1).toLowerCase(),
 			change.document.getText()
 		).compressedlinearray
+	);
+	analyzedDocuments.set(
+		change.document.uri,
+		await analyzeClass(
+			change.document.getText()
+		)
 	);
 });
 
@@ -174,7 +183,7 @@ connection.onNotification("intersystems/server/passwordChange",
 	}
 );
 
-connection.onNotification("intersystems/server/connectionChange",() => {
+connection.onNotification("intersystems/server/connectionChange", () => {
 	// Clear all cached server connection info
 	serverSpecs.clear();
 	schemaCaches.clear();
@@ -192,21 +201,21 @@ connection.onTypeDefinition(onTypeDefinition);
 
 connection.onDeclaration(onDeclaration);
 
-connection.onRequest("intersystems/debugger/evaluatableExpression",evaluatableExpression);
+connection.onRequest("intersystems/debugger/evaluatableExpression", evaluatableExpression);
 
-connection.onRequest("intersystems/refactor/listOverridableMembers",listOverridableMembers);
+connection.onRequest("intersystems/refactor/listOverridableMembers", listOverridableMembers);
 
-connection.onRequest("intersystems/refactor/addOverridableMembers",addOverridableMembers);
+connection.onRequest("intersystems/refactor/addOverridableMembers", addOverridableMembers);
 
-connection.onRequest("intersystems/refactor/validateOverrideCursor",validateOverrideCursor);
+connection.onRequest("intersystems/refactor/validateOverrideCursor", validateOverrideCursor);
 
-connection.onRequest("intersystems/refactor/listParameterTypes",listParameterTypes);
+connection.onRequest("intersystems/refactor/listParameterTypes", listParameterTypes);
 
-connection.onRequest("intersystems/refactor/listImportPackages",listImportPackages);
+connection.onRequest("intersystems/refactor/listImportPackages", listImportPackages);
 
-connection.onRequest("intersystems/refactor/addImportPackage",addImportPackage);
+connection.onRequest("intersystems/refactor/addImportPackage", addImportPackage);
 
-connection.onRequest("intersystems/refactor/addMethod",addMethod);
+connection.onRequest("intersystems/refactor/addMethod", addMethod);
 
 connection.onCodeAction(onCodeAction);
 
@@ -222,9 +231,9 @@ connection.languages.typeHierarchy.onSubtypes(onSubtypes);
 
 connection.languages.typeHierarchy.onSupertypes(onSupertypes);
 
-connection.onRequest("intersystems/embedded/languageAtPosition",languageAtPosition);
+connection.onRequest("intersystems/embedded/languageAtPosition", languageAtPosition);
 
-connection.onRequest("intersystems/embedded/isolateEmbeddedLanguage",isolateEmbeddedLanguage);
+connection.onRequest("intersystems/embedded/isolateEmbeddedLanguage", isolateEmbeddedLanguage);
 
 connection.languages.diagnostics.on(onDiagnostics);
 

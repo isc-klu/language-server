@@ -1,7 +1,7 @@
 import { Position, TextDocumentPositionParams, Range, MarkupKind, Hover } from 'vscode-languageserver/node';
 import { getServerSpec, getLanguageServerSettings, findFullRange, normalizeClassname, makeRESTRequest, documaticHtmlToMarkdown, getMacroContext, isMacroDefinedAbove, haltOrHang, quoteUDLIdentifier, getClassMemberContext, beautifyFormalSpec, determineClassNameParameterClass, storageKeywordsKeyForToken, getParsedDocument, currentClass, determineVariableClass, macroDefToDoc, urlMapAttribute } from '../utils/functions';
 import { ServerSpec, QueryData, CommandDoc, KeywordDoc } from '../utils/types';
-import { documents, corePropertyParams, mppContinue } from '../utils/variables';
+import { documents, corePropertyParams, mppContinue, getAnalyzedClass, getAnalyzedMember } from '../utils/variables';
 import * as ld from '../utils/languageDefinitions';
 
 import commands from "../documentation/commands.json";
@@ -23,6 +23,7 @@ import queryKeywords from "../documentation/keywords/Query.json";
 import storageKeywords from "../documentation/keywords/Storage.json";
 import triggerKeywords from "../documentation/keywords/Trigger.json";
 import xdataKeywords from "../documentation/keywords/XData.json";
+import { MemberInfo } from '../analysis';
 
 function documaticLink(server: ServerSpec, cls: string): string {
 	return `[${cls}](${server.scheme}://${server.host}:${server.port}${server.pathPrefix}/csp/documatic/%25CSP.Documatic.cls?LIBRARY=${encodeURIComponent(server.namespace.toUpperCase())
@@ -33,6 +34,7 @@ function markupValue(header: string, body?: string): string {
 	return body?.trim().length ? [header, "***", body].join("\n") : header;
 }
 
+const localInfoPrefix = `[📁 LOCAL] `;
 export async function onHover(params: TextDocumentPositionParams): Promise<Hover> {
 	const doc = documents.get(params.textDocument.uri);
 	if (doc === undefined) { return null; }
@@ -83,6 +85,23 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 
 				// Normalize the class name if there are imports
 				const normalizedname = await normalizeClassname(doc, parsed, word, server, params.position.line);
+
+				// Try getting the description for this class from local files
+				const uri_info = getAnalyzedClass(normalizedname);
+				if (uri_info) {
+					const [uri, info] = uri_info;
+					// The class was found
+					return {
+						contents: {
+							kind: MarkupKind.Markdown,
+							value: markupValue(
+								`[${normalizedname}](${uri})`,
+								documaticHtmlToMarkdown(localInfoPrefix + info.doc)
+							)
+						},
+						range: wordrange
+					};
+				}
 
 				// Get the description for this class from the server
 				const querydata: QueryData = {
@@ -540,6 +559,17 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 				if (membercontext.baseclass === "") {
 					// If we couldn't determine the class, don't return anything
 					return null;
+				}
+
+				const memberInfo = getAnalyzedMember(membercontext.baseclass, unquotedname);
+				if (memberInfo) {
+					return {
+						contents: {
+							kind: MarkupKind.Markdown,
+							value: markupValue(hoverHeadefFromMemberInfo(membercontext.baseclass, memberInfo), hoverBodyFromMemberInfo(memberInfo))
+						},
+						range: memberrange
+					};
 				}
 
 				// Query the server to get the description of this member using its base class, text and token type
@@ -1201,3 +1231,48 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 		}
 	}
 }
+function hoverHeadefFromMemberInfo(baseclass: string, memberInfo: MemberInfo): string {
+	let content = `(**${baseclass}**) <u>**${memberInfo.name}**</u>`;
+	const { kind } = memberInfo;
+	if (kind.tag === "classMethod" || kind.tag === "clientMethod" || kind.tag === "method") {
+		const { args, out } = kind.value;
+		const argList = args.map((arg) => {
+			let string = "";
+			if (arg.byRef) {
+				string += "& "
+			}
+			string += arg.name;
+			if (arg.variadic) {
+				string += "..."
+			}
+			if (arg.t) {
+				string += ` As ${arg.t}`;
+			}
+			return string;
+		}).join(", ");
+		content += `(${argList})`;
+		if (out) {
+			content += ` As ${out}`;
+		}
+	} else if (kind.tag === "property" || kind.tag === "relationship") {
+		if (kind.value) {
+			content += ` As ${kind.value}`;
+		}
+	} else if (kind.tag === "parameter") {
+		const value = kind.value;
+		if (value.t) {
+			content += ` As ${value.t}`;
+		}
+		if (value.v) {
+			content += ` = ${value.v}`;
+		}
+	}
+	return content;
+}
+
+function hoverBodyFromMemberInfo(memberInfo: MemberInfo): string {
+	let content = localInfoPrefix
+	content += memberInfo.doc;
+	return documaticHtmlToMarkdown(content);
+}
+

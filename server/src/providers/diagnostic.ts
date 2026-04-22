@@ -18,7 +18,8 @@ import {
 	makeRESTRequest,
 	normalizeClassname,
 	quoteUDLIdentifier,
-	isClassMember
+	isClassMember,
+	getAnalyzedDocument
 } from '../utils/functions';
 import { zutilFunctions, lexerLanguages, documents } from '../utils/variables';
 import { ServerSpec, StudioOpenDialogFile, QueryData } from '../utils/types';
@@ -60,6 +61,8 @@ export async function onDiagnostics(params: DocumentDiagnosticParams): Promise<D
 	if (doc === undefined) throw new Error("Unknown document");
 	const parsed = await getParsedDocument(params.textDocument.uri);
 	if (parsed === undefined) throw new Error("Document not parsed");
+	const analyzed = await getAnalyzedDocument(params.textDocument.uri);
+	if (analyzed === undefined) throw new Error("Document not analyzed");
 
 	const server: ServerSpec = await getServerSpec(doc.uri);
 	const settings = await getLanguageServerSettings(doc.uri);
