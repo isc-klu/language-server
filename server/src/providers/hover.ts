@@ -34,7 +34,7 @@ function markupValue(header: string, body?: string): string {
 	return body?.trim().length ? [header, "***", body].join("\n") : header;
 }
 
-const localInfoPrefix = `[📁 LOCAL] `;
+const localInfoPrefix = `[📁] `;
 export async function onHover(params: TextDocumentPositionParams): Promise<Hover> {
 	const doc = documents.get(params.textDocument.uri);
 	if (doc === undefined) { return null; }
@@ -95,8 +95,8 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 						contents: {
 							kind: MarkupKind.Markdown,
 							value: markupValue(
-								`[${normalizedname}](${uri})`,
-								documaticHtmlToMarkdown(localInfoPrefix + info.doc)
+								`${localInfoPrefix} + [${normalizedname}](${uri})`,
+								documaticHtmlToMarkdown(info.doc)
 							)
 						},
 						range: wordrange
@@ -1232,14 +1232,14 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 	}
 }
 function hoverHeadefFromMemberInfo(baseclass: string, memberInfo: MemberInfo): string {
-	let content = `(**${baseclass}**) <u>**${memberInfo.name}**</u>`;
+	let content = localInfoPrefix + `(**${baseclass}**) <u>**${memberInfo.name}**</u>`;
 	const { kind } = memberInfo;
 	if (kind.tag === "classMethod" || kind.tag === "clientMethod" || kind.tag === "method") {
 		const { args, out } = kind.value;
 		const argList = args.map((arg) => {
 			let string = "";
 			if (arg.byRef) {
-				string += "& "
+				string += "&"
 			}
 			string += arg.name;
 			if (arg.variadic) {
@@ -1271,7 +1271,7 @@ function hoverHeadefFromMemberInfo(baseclass: string, memberInfo: MemberInfo): s
 }
 
 function hoverBodyFromMemberInfo(memberInfo: MemberInfo): string {
-	let content = localInfoPrefix
+	let content = ""
 	content += memberInfo.doc;
 	return documaticHtmlToMarkdown(content);
 }
