@@ -1,21 +1,11 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es6",
-		"outDir": "out",
-		"rootDir": "src",
-		"sourceMap": true,
-		"noImplicitAny": false
-	},
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"node_modules",
-		".vscode-test"
-	],
+	"files": [],
 	"references": [
-		{ "path": "./client" },
-		{ "path": "./server" }
-	]
+		{
+			"path": "./client"
+		},
+		{
+			"path": "./server"
+		}
+	],
 }
