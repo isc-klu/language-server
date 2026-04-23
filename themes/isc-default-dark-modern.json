@@ -133,7 +133,7 @@
 		"titleBar.inactiveForeground": "#9d9d9d",
 		"welcomePage.progress.foreground": "#0078d4",
 		"welcomePage.tileBackground": "#2b2b2b",
-		"widget.border": "#313131",
+		"widget.border": "#313131"
 		//"activityBar.dropBorder": "#d7d7d7",
 		//"banner.background": "#04395e",
 		//"banner.foreground": "#ffffff",
@@ -894,10 +894,7 @@
 			}
 		},
 		{
-			"scope": [
-				"meta.preprocessor",
-				"entity.name.function.preprocessor"
-			],
+			"scope": ["meta.preprocessor", "entity.name.function.preprocessor"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
@@ -939,19 +936,13 @@
 			}
 		},
 		{
-			"scope": [
-				"storage.modifier",
-				"keyword.operator.noexcept"
-			],
+			"scope": ["storage.modifier", "keyword.operator.noexcept"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
 		},
 		{
-			"scope": [
-				"string",
-				"meta.embedded.assembly"
-			],
+			"scope": ["string", "meta.embedded.assembly"],
 			"settings": {
 				"foreground": "#CE9178"
 			}
@@ -985,9 +976,7 @@
 			}
 		},
 		{
-			"scope": [
-				"meta.template.expression"
-			],
+			"scope": ["meta.template.expression"],
 			"settings": {
 				"foreground": "#D4D4D4"
 			}
@@ -1047,10 +1036,7 @@
 			}
 		},
 		{
-			"scope": [
-				"punctuation.section.embedded.begin.php",
-				"punctuation.section.embedded.end.php"
-			],
+			"scope": ["punctuation.section.embedded.begin.php", "punctuation.section.embedded.end.php"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
@@ -1068,11 +1054,7 @@
 			}
 		},
 		{
-			"scope": [
-				"storage.modifier.import.java",
-				"variable.language.wildcard.java",
-				"storage.modifier.package.java"
-			],
+			"scope": ["storage.modifier.import.java", "variable.language.wildcard.java", "storage.modifier.package.java"],
 			"settings": {
 				"foreground": "#D4D4D4"
 			}
@@ -1173,18 +1155,13 @@
 			}
 		},
 		{
-			"scope": [
-				"variable.other.constant",
-				"variable.other.enummember"
-			],
+			"scope": ["variable.other.constant", "variable.other.enummember"],
 			"settings": {
 				"foreground": "#4FC1FF"
 			}
 		},
 		{
-			"scope": [
-				"meta.object-literal.key"
-			],
+			"scope": ["meta.object-literal.key"],
 			"settings": {
 				"foreground": "#9CDCFE"
 			}
@@ -1229,10 +1206,7 @@
 			}
 		},
 		{
-			"scope": [
-				"keyword.operator.or.regexp",
-				"keyword.control.anchor.regexp"
-			],
+			"scope": ["keyword.operator.or.regexp", "keyword.control.anchor.regexp"],
 			"settings": {
 				"foreground": "#DCDCAA"
 			}
@@ -1244,10 +1218,7 @@
 			}
 		},
 		{
-			"scope": [
-				"constant.character",
-				"constant.other.option"
-			],
+			"scope": ["constant.character", "constant.other.option"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
@@ -1289,28 +1260,28 @@
 			}
 		}
 	],
-    "semanticHighlighting": true,
-    "semanticTokenColors": {
-        "ISC_Error": {"foreground": "#ff8585", "bold": true},
-        "ISC_Comment": "#80bd66",
-        "ISC_StringLiteral": "#d4b57c",
-        "ISC_NumericLiteral": "#d4b57c",
-        "ISC_ClassName": "#4EC9B0",
-        "ISC_ClassMember": "#DCDCAA",
-        "ISC_DocComment": "#80bd66",
-        "ISC_Parameter": "#ff75f4",
-        "ISC_System": "#85a7ff",
-        "ISC_Command": "#ffffff",
-        "ISC_Keyword": "#85a7ff",
-        "ISC_LocalVariable": "#ade2ff",
-        "ISC_LocalVariableUnset": "#ade2ff",
-        "ISC_PublicVariable": "#64c9ff",
-        "ISC_SQLKeyword": "#ffffff",
+	"semanticHighlighting": true,
+	"semanticTokenColors": {
+		"ISC_Error": { "foreground": "#ff8585", "bold": true },
+		"ISC_Comment": "#80bd66",
+		"ISC_StringLiteral": "#d4b57c",
+		"ISC_NumericLiteral": "#d4b57c",
+		"ISC_ClassName": "#4EC9B0",
+		"ISC_ClassMember": "#DCDCAA",
+		"ISC_DocComment": "#80bd66",
+		"ISC_Parameter": "#ff75f4",
+		"ISC_System": "#85a7ff",
+		"ISC_Command": "#ffffff",
+		"ISC_Keyword": "#85a7ff",
+		"ISC_LocalVariable": "#ade2ff",
+		"ISC_LocalVariableUnset": "#ade2ff",
+		"ISC_PublicVariable": "#64c9ff",
+		"ISC_SQLKeyword": "#ffffff",
 		"ISC_SQLFunction": "#85a7ff",
-		"ISC_Neutral": {"foreground": "#ffffff", "italic": true},
+		"ISC_Neutral": { "foreground": "#ffffff", "italic": true },
 		"XML_Grayout": "#aaaaaa",
 		"ISC_Operator": "#ffffff",
 		"ISC_Delimiter": "#ffffff",
 		"ISC_MarkupText": "#ffffff"
-    }
+	}
 }

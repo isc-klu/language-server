@@ -1,219 +1,219 @@
 [
-  {
-    "label": "#;",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#;` preprocessor directive creates a single line comment that does not appear in .int code.",
-    "link": "mpp_lbSemi"
-  },
-  {
-    "label": "#Def1Arg",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Def1Arg` preprocessor directive defines a macro with only one argument, where that argument can have commas in it.",
-    "link": "mpp_lbDef1Arg"
-  },
-  {
-    "label": "#Define",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Define` preprocessor directive defines a macro.",
-    "link": "mpp_lbDefine"
-  },
-  {
-    "label": "#Dim",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Dim` preprocessor directive specifies the intended data type of a local variable and can optionally specify its initial value.",
-    "link": "mpp_lbDim"
-  },
-  {
-    "label": "#Else",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Else` preprocessor directive specifies the beginning of the fall-through case in a set of preprocessor conditions.",
-    "link": "mpp_lbElse"
-  },
-  {
-    "label": "#ElseIf",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#ElseIf` preprocessor directive specifies the beginning of a secondary case in a set of preprocessor conditions that begin with `#If`.",
-    "link": "mpp_lbElseIf"
-  },
-  {
-    "label": "#ElIf",
-    "start": true,
-    "middle": false,
-    "documentation": "Alternate name of `#ElseIf`.",
-    "link": "mpp_lbElseIf"
-  },
-  {
-    "label": "#EndIf",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#EndIf` preprocessor directive concludes a set of preprocessor conditions.",
-    "link": "mpp_lbEndIf"
-  },
-  {
-    "label": "#Execute",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Execute` preprocessor directive executes a line of ObjectScript at compile time.",
-    "link": "mpp_lbExecute"
-  },
-  {
-    "label": "#If",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#If` preprocessor directive begins a block of conditional text.",
-    "link": "mpp_lbIf"
-  },
-  {
-    "label": "#IfDef",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#IfDef` preprocessor directive marks the beginning of a block of conditional code where execution depends on a macro having been defined.",
-    "link": "mpp_lbIfDef"
-  },
-  {
-    "label": "#IfNDef",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#IfNDef` preprocessor directive marks the beginning of a block of conditional code where execution depends on a macro having not been defined.",
-    "link": "mpp_lbIfNDef"
-  },
-  {
-    "label": "#IfUnDef",
-    "start": true,
-    "middle": false,
-    "documentation": "Alternate name of `#IfNDef`.",
-    "link": "mpp_lbIfNDef"
-  },
-  {
-    "label": "#Import",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Import` preprocessor directive specifies the schema search path for any subsequent Embedded SQL DML statements.",
-    "link": "mpp_lbImport"
-  },
-  {
-    "label": "#Include",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Include` preprocessor directive loads a specified file name that contains preprocessor directives.",
-    "link": "mpp_lbInclude"
-  },
-  {
-    "label": "#NoShow",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#NoShow` preprocessor directive ends a comment section that is part of an include file.",
-    "link": "mpp_lbNoShow"
-  },
-  {
-    "label": "#Show",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#Show` preprocessor directive begins a comment section that is part of an include file.",
-    "link": "mpp_lbShow"
-  },
-  {
-    "label": "#SQLCompile Audit",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#SQLCompile Audit` preprocessor directive is a boolean that specifies whether any subsequent Embedded SQL statements should be audited.",
-    "link": "mpp_lbSQLCompile_Audit"
-  },
-  {
-    "label": "#SQLCompile Path",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#SQLCompile Path` preprocessor directive specifies the schema search path for any subsequent Embedded SQL DML statements.",
-    "link": "mpp_lbSQLCompile_Path"
-  },
-  {
-    "label": "#SQLCompile Select",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#SQLCompile Select` preprocessor directive specifies the data format mode for any subsequent Embedded SQL statements.",
-    "link": "mpp_lbSQLCompile_Select"
-  },
-  {
-    "label": "#UnDef",
-    "start": true,
-    "middle": false,
-    "documentation": "The `#UnDef` preprocessor directive removes the definition for an already-defined macro.",
-    "link": "mpp_lbUnDef"
-  },
-  {
-    "label": "##;",
-    "start": true,
-    "middle": true,
-    "documentation": "The `##;` preprocessor directive makes the remaining part of the current line a comment that does not appear in .int code.",
-    "link": "mpp_lblbSemi"
-  },
-  {
-    "label": "##Continue",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##Continue` preprocessor directive continues a macro definition on the next line, to support multiline macro definitions.",
-    "link": "mpp_lblbContinue"
-  },
-  {
-    "label": "##Expression",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##Expression` preprocessor function evaluates an ObjectScript expression at compile time.",
-    "link": "mpp_lblbExpression"
-  },
-  {
-    "label": "##Function",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##Function` preprocessor function evaluates an ObjectScript function at compile time.",
-    "link": "mpp_lblbFunction"
-  },
-  {
-    "label": "##Lit",
-    "start": true,
-    "middle": true,
-    "documentation": "The `##Lit` preprocessor function preserves the content of its argument in literal form.",
-    "link": "mpp_lblbLit"
-  },
-  {
-    "label": "##Quote",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##Quote` preprocessor function takes a single argument and returns that argument quoted.",
-    "link": "mpp_lblbQuote"
-  },
-  {
-    "label": "##QuoteExp",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##QuoteExp` preprocessor function takes as an argument an expression that gets evaluated during compilation.",
-    "link": "mpp_lblbQuoteExp"
-  },
-  {
-    "label": "##SQL",
-    "start": true,
-    "middle": false,
-    "documentation": "The `##SQL` preprocessor directive invokes a specified Embedded SQL statement at runtime.",
-    "link": "mpp_lblbSQL"
-  },
-  {
-    "label": "##StripQ",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##StripQ` preprocessor function takes a single argument and returns that argument with quotes removed.",
-    "link": "mpp_lblbStripQ"
-  },
-  {
-    "label": "##Unique",
-    "start": false,
-    "middle": true,
-    "documentation": "The `##Unique` preprocessor function creates a new, unique local variable within a macro definition for use at compile time or runtime.",
-    "link": "mpp_lblbUnique"
-  }
+	{
+		"label": "#;",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#;` preprocessor directive creates a single line comment that does not appear in .int code.",
+		"link": "mpp_lbSemi"
+	},
+	{
+		"label": "#Def1Arg",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Def1Arg` preprocessor directive defines a macro with only one argument, where that argument can have commas in it.",
+		"link": "mpp_lbDef1Arg"
+	},
+	{
+		"label": "#Define",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Define` preprocessor directive defines a macro.",
+		"link": "mpp_lbDefine"
+	},
+	{
+		"label": "#Dim",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Dim` preprocessor directive specifies the intended data type of a local variable and can optionally specify its initial value.",
+		"link": "mpp_lbDim"
+	},
+	{
+		"label": "#Else",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Else` preprocessor directive specifies the beginning of the fall-through case in a set of preprocessor conditions.",
+		"link": "mpp_lbElse"
+	},
+	{
+		"label": "#ElseIf",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#ElseIf` preprocessor directive specifies the beginning of a secondary case in a set of preprocessor conditions that begin with `#If`.",
+		"link": "mpp_lbElseIf"
+	},
+	{
+		"label": "#ElIf",
+		"start": true,
+		"middle": false,
+		"documentation": "Alternate name of `#ElseIf`.",
+		"link": "mpp_lbElseIf"
+	},
+	{
+		"label": "#EndIf",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#EndIf` preprocessor directive concludes a set of preprocessor conditions.",
+		"link": "mpp_lbEndIf"
+	},
+	{
+		"label": "#Execute",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Execute` preprocessor directive executes a line of ObjectScript at compile time.",
+		"link": "mpp_lbExecute"
+	},
+	{
+		"label": "#If",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#If` preprocessor directive begins a block of conditional text.",
+		"link": "mpp_lbIf"
+	},
+	{
+		"label": "#IfDef",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#IfDef` preprocessor directive marks the beginning of a block of conditional code where execution depends on a macro having been defined.",
+		"link": "mpp_lbIfDef"
+	},
+	{
+		"label": "#IfNDef",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#IfNDef` preprocessor directive marks the beginning of a block of conditional code where execution depends on a macro having not been defined.",
+		"link": "mpp_lbIfNDef"
+	},
+	{
+		"label": "#IfUnDef",
+		"start": true,
+		"middle": false,
+		"documentation": "Alternate name of `#IfNDef`.",
+		"link": "mpp_lbIfNDef"
+	},
+	{
+		"label": "#Import",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Import` preprocessor directive specifies the schema search path for any subsequent Embedded SQL DML statements.",
+		"link": "mpp_lbImport"
+	},
+	{
+		"label": "#Include",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Include` preprocessor directive loads a specified file name that contains preprocessor directives.",
+		"link": "mpp_lbInclude"
+	},
+	{
+		"label": "#NoShow",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#NoShow` preprocessor directive ends a comment section that is part of an include file.",
+		"link": "mpp_lbNoShow"
+	},
+	{
+		"label": "#Show",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#Show` preprocessor directive begins a comment section that is part of an include file.",
+		"link": "mpp_lbShow"
+	},
+	{
+		"label": "#SQLCompile Audit",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#SQLCompile Audit` preprocessor directive is a boolean that specifies whether any subsequent Embedded SQL statements should be audited.",
+		"link": "mpp_lbSQLCompile_Audit"
+	},
+	{
+		"label": "#SQLCompile Path",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#SQLCompile Path` preprocessor directive specifies the schema search path for any subsequent Embedded SQL DML statements.",
+		"link": "mpp_lbSQLCompile_Path"
+	},
+	{
+		"label": "#SQLCompile Select",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#SQLCompile Select` preprocessor directive specifies the data format mode for any subsequent Embedded SQL statements.",
+		"link": "mpp_lbSQLCompile_Select"
+	},
+	{
+		"label": "#UnDef",
+		"start": true,
+		"middle": false,
+		"documentation": "The `#UnDef` preprocessor directive removes the definition for an already-defined macro.",
+		"link": "mpp_lbUnDef"
+	},
+	{
+		"label": "##;",
+		"start": true,
+		"middle": true,
+		"documentation": "The `##;` preprocessor directive makes the remaining part of the current line a comment that does not appear in .int code.",
+		"link": "mpp_lblbSemi"
+	},
+	{
+		"label": "##Continue",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##Continue` preprocessor directive continues a macro definition on the next line, to support multiline macro definitions.",
+		"link": "mpp_lblbContinue"
+	},
+	{
+		"label": "##Expression",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##Expression` preprocessor function evaluates an ObjectScript expression at compile time.",
+		"link": "mpp_lblbExpression"
+	},
+	{
+		"label": "##Function",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##Function` preprocessor function evaluates an ObjectScript function at compile time.",
+		"link": "mpp_lblbFunction"
+	},
+	{
+		"label": "##Lit",
+		"start": true,
+		"middle": true,
+		"documentation": "The `##Lit` preprocessor function preserves the content of its argument in literal form.",
+		"link": "mpp_lblbLit"
+	},
+	{
+		"label": "##Quote",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##Quote` preprocessor function takes a single argument and returns that argument quoted.",
+		"link": "mpp_lblbQuote"
+	},
+	{
+		"label": "##QuoteExp",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##QuoteExp` preprocessor function takes as an argument an expression that gets evaluated during compilation.",
+		"link": "mpp_lblbQuoteExp"
+	},
+	{
+		"label": "##SQL",
+		"start": true,
+		"middle": false,
+		"documentation": "The `##SQL` preprocessor directive invokes a specified Embedded SQL statement at runtime.",
+		"link": "mpp_lblbSQL"
+	},
+	{
+		"label": "##StripQ",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##StripQ` preprocessor function takes a single argument and returns that argument with quotes removed.",
+		"link": "mpp_lblbStripQ"
+	},
+	{
+		"label": "##Unique",
+		"start": false,
+		"middle": true,
+		"documentation": "The `##Unique` preprocessor function creates a new, unique local variable within a macro definition for use at compile time or runtime.",
+		"link": "mpp_lblbUnique"
+	}
 ]

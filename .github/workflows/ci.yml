@@ -87,14 +87,14 @@ jobs:
       - name: Download packages
         uses: actions/download-artifact@v6
         with:
-         pattern: '**/*.vsix'
+          pattern: "**/*.vsix"
       - name: Create Release
         id: create-release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.set-version.outputs.version }}
           prerelease: ${{ github.event_name != 'release' }}
-          files: '**/*.vsix'
+          files: "**/*.vsix"
           token: ${{ secrets.GITHUB_TOKEN }}
   publish:
     runs-on: ubuntu-latest
@@ -112,7 +112,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.release.tag_name }}
-          files: '**/*.vsix'
+          files: "**/*.vsix"
           body: See CHANGELOG for details
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to VS Code Marketplace

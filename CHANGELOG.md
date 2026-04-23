@@ -1,13 +1,16 @@
 # Changelog
 
 ## [2.8.3] - 2026-04-14
-- Fix issue [#395](https://github.com/intersystems/language-server/issues/395): Hover info for method that takes no argument has extraneous * character
+
+- Fix issue [#395](https://github.com/intersystems/language-server/issues/395): Hover info for method that takes no argument has extraneous \* character
 - Fix issue [#396](https://github.com/intersystems/language-server/issues/396): Upgrade dependencies
 
 ## [2.8.2] - 2026-01-21
+
 - Fix issue [#392](https://github.com/intersystems/language-server/issues/392): Restore support for a wide array of Linux distros
 
 ## [2.8.1] - 2026-01-05
+
 - Fix issue [#379](https://github.com/intersystems/language-server/issues/379): SQL syntax error when using "ms" as an alias
 - Fix issue [#381](https://github.com/intersystems/language-server/issues/381): Fix extension crashes due to request forwarding
 - Fix issue [#385](https://github.com/intersystems/language-server/issues/385): Incorrect SQL syntax error when using an extrinsic function with a dot
@@ -19,16 +22,19 @@
   - DP-447006: Fix SQL syntax coloring for ATAN2 ODBC method
 
 ## [2.8.0] - 2025-07-28
+
 - Fix issue [#378](https://github.com/intersystems/language-server/issues/378): Remove `intersystems.language-server.completion.showInternal` setting
 - Fix issue [#380](https://github.com/intersystems/language-server/issues/380): Add the Deprecated tag to DocumentSymbols in classes
 
 ## [2.7.4] - 2025-06-30
+
 - Fix issue [#373](https://github.com/intersystems/language-server/issues/373): Add go to definition and hover support for `UrlMap` Call and Forward attribute values
 - Fix issue [#374](https://github.com/intersystems/language-server/issues/374): `undefined` items appearing in completion lists for XML XData
 - Fix issue [#376](https://github.com/intersystems/language-server/issues/376): Completion inside `$TEXT()` should always return routines
 - Fix issue [#377](https://github.com/intersystems/language-server/issues/377): Improve triggering of completion on type
 
 ## [2.7.3] - 2025-05-05
+
 - Fix issue [#366](https://github.com/intersystems/language-server/issues/366): Language Server can return invalid DocumentSymbols in some rare circumstances
 - Fix issue [#367](https://github.com/intersystems/language-server/issues/367): Support `objectscript.multilineMethodArgs` being set per workspace folder
 - Fix issue [#370](https://github.com/intersystems/language-server/issues/370): Infinite recursion when a variable is set to the result of one of its instance methods
@@ -38,14 +44,17 @@
   - DP-438845, DP-440271: Support new keywords for deferred filing of indices and computed fields
 
 ## [2.7.2] - 2025-03-26
+
 - Fix issue [#362](https://github.com/intersystems/language-server/issues/362): Fix go to definition on labels starting with a number in the current routine
 - Fix issue [#363](https://github.com/intersystems/language-server/issues/363): Parser support for table partitioning feature
 
 ## [2.7.1] - 2025-03-10
+
 - Fix issue [#360](https://github.com/intersystems/language-server/issues/360): Infinite recursion in local variable type inference
 - Fix issue [#361](https://github.com/intersystems/language-server/issues/361): Input UI tweaks
 
 ## [2.7.0] - 2025-02-03
+
 - Fix issue [#258](https://github.com/intersystems/language-server/issues/258): Support Windows Arm
 - Fix issue [#351](https://github.com/intersystems/language-server/issues/351): Memory leak in parser module
 - Fix issue [#357](https://github.com/intersystems/language-server/issues/357): Add completion for globals and routines
@@ -55,17 +64,21 @@
   - DP-436900: Add support for /USEIPV6 OPEN keyword
 
 ## [2.6.5] - 2024-11-13
+
 - Fix issue [#356](https://github.com/intersystems/language-server/issues/356): Unexpected new dialog during password retrieval using Server Manager authprovider
 
 ## [2.6.4] - 2024-11-13
+
 - Fix issue [#355](https://github.com/intersystems/language-server/issues/355): Prevent overprompting for Server Manager permission and account information
 
 ## [2.6.3] - 2024-10-25
+
 - Fix issue [#352](https://github.com/intersystems/language-server/issues/352): Hide Deprecated classes and class members from completion lists by default
 - Fix issue [#353](https://github.com/intersystems/language-server/issues/353): Fix keyword completion for ClassMethods
 - Fix issue [#354](https://github.com/intersystems/language-server/issues/354): Improve conversion of Documatic HTML to Markdown
 
 ## [2.6.2] - 2024-10-07
+
 - Fix issue [#345](https://github.com/intersystems/language-server/issues/345): Add intellisense for variables passed by reference as method arguments
 - Fix issue [#347](https://github.com/intersystems/language-server/issues/347): Setting a variable's subscript should not affect the type of that variable
 - Fix issue [#348](https://github.com/intersystems/language-server/issues/348): Support intellisense for method arguments that don't have a declared type
@@ -75,10 +88,12 @@
   - DP-435183: Clear table of known local variables when exiting a routine procedure
 
 ## [2.6.1] - 2024-08-30
+
 - Fix issue [#343](https://github.com/intersystems/language-server/issues/343): foldingRange fails on some C-style block comments
 - Fix issue [#344](https://github.com/intersystems/language-server/issues/344): Prevent errors during hover when no data was returned from the server
 
 ## [2.6.0] - 2024-08-29
+
 - Fix issue [#329](https://github.com/intersystems/language-server/issues/329): Support Unix platforms that don't have the `en_US.UTF-8` locale
 - Fix issue [#336](https://github.com/intersystems/language-server/issues/336): Add intellisense for variables set to the returned value of a method, or a property, with a declared type
 - Fix issue [#337](https://github.com/intersystems/language-server/issues/337): Improve Hover headers
@@ -89,6 +104,7 @@
 - Fix issue [#342](https://github.com/intersystems/language-server/issues/342): Reduce clutter in class and class member completion lists by default
 
 ## [2.5.1] - 2024-07-09
+
 - Fix issue [#328](https://github.com/intersystems/language-server/issues/328): Fix namespace detection for Diagnostic computation
 - Fix issue [#331](https://github.com/intersystems/language-server/issues/331): Fix display of method arguments with a colon in the default value
 - Fix issue [#333](https://github.com/intersystems/language-server/issues/333): Fix folding ranges when routine labels that don't appear in the first column
@@ -97,6 +113,7 @@
   - DP-430950: Support new `Requires` Query keyword
 
 ## [2.5.0] - 2024-05-02
+
 - Fix issue [#312](https://github.com/intersystems/language-server/issues/312): Fix routine existence diagnostics for routines that only exist in OBJ form
 - Fix issue [#313](https://github.com/intersystems/language-server/issues/313): Add Diagnostic when `ROUTINE` header is missing
 - Fix issue [#314](https://github.com/intersystems/language-server/issues/314): Suggest boolean class keywords for completion after typing `Not`
@@ -119,6 +136,7 @@
   - DP-430977: Fix coloring of undefined local variables in a ZWrite argument list
 
 ## [2.4.4] - 2024-03-27
+
 - Fix issue [#307](https://github.com/intersystems/language-server/issues/307): Add intellisense for property Aliases
 - Fix issue [#308](https://github.com/intersystems/language-server/issues/308): Enhance intellisense for %New when %OnNew is defined
 - Fix issue [#309](https://github.com/intersystems/language-server/issues/309): Fix coloring of CSS urls that contain a right parenthesis
@@ -138,6 +156,7 @@
   - DP-430131: Fix coloring of SELECT statement in parentheses
 
 ## [2.4.3] - 2024-02-20
+
 - Fix issue [#302](https://github.com/intersystems/language-server/issues/302): Intellisense is garbled for macros with Markdown characters in their definition
 - Fix issue [#303](https://github.com/intersystems/language-server/issues/303): Use cached text of file instead of always reading from disk for computing locations
 - Fix issue [#304](https://github.com/intersystems/language-server/issues/304): Add documentation for vector functions
@@ -151,9 +170,11 @@
   - DP-429175: Coloring for %DORUNTIME keyword option
 
 ## [2.4.2] - 2024-01-18
+
 - Fix issue [#301](https://github.com/intersystems/language-server/issues/301): Error thrown when not using a server connection
 
 ## [2.4.1] - 2024-01-18
+
 - Fix issue [#292](https://github.com/intersystems/language-server/issues/292): Add intellisense for instance variable (i%PropertyName) syntax
 - Fix issue [#296](https://github.com/intersystems/language-server/issues/296): Code completion doesn't appear when typing dot in a class name at the class level
 - Fix issue [#299](https://github.com/intersystems/language-server/issues/299): Add intellisense for class name parameters
@@ -174,6 +195,7 @@
   - DP-428056: Coloring for SET ML CONFIGURATION
 
 ## [2.4.0] - 2023-10-17
+
 - Fix issue [#282](https://github.com/intersystems/language-server/issues/282): Syntax error in SQL query using PARTITION or OVER
 - Fix issue [#288](https://github.com/intersystems/language-server/issues/288): Intellisense for `$ZPOS` system variable doesn't suggest full name `$ZPOSITION`
 - Fix issue [#289](https://github.com/intersystems/language-server/issues/289): Go To Definition confuses properties and methods with the same name
@@ -190,25 +212,30 @@
   - DP-426213: Coloring for CREATE & DROP SCHEMA
 
 ## [2.3.6] - 2023-07-05
+
 - Fix issue [#283](https://github.com/intersystems/language-server/issues/283): Use all include files for macro intellisense in routines
 - Fix issue [#284](https://github.com/intersystems/language-server/issues/284): Create Diagnostics for packages in the class Import statement that don't exist
 - Fix issue [#286](https://github.com/intersystems/language-server/issues/286): Error thrown when range formatting is triggered automatically on save
 
 ## [2.3.5] - 2023-05-22
+
 - Fix issue [#281](https://github.com/intersystems/language-server/issues/281): "Right hand side of instanceof is not an object" error when rendering class reference HTML
 
 ## [2.3.4] - 2023-05-22
+
 - Fix issue [#276](https://github.com/intersystems/language-server/issues/276): TypeError causes crash when getting inherited Import list fails
 - Fix issue [#277](https://github.com/intersystems/language-server/issues/277): Don't log warnings when server connection is inactive
 - Fix issue [#278](https://github.com/intersystems/language-server/issues/278): Support go to definition without an active server connection
 
 ## [2.3.3] - 2023-05-03
+
 - Fix issue [#271](https://github.com/intersystems/language-server/issues/271): Add setting to suppress syntax error Diagnostics for specific languages
 - Fix issue [#272](https://github.com/intersystems/language-server/issues/272): Expand arguments when hovering over macro defined in the current file
 - Fix issue [#273](https://github.com/intersystems/language-server/issues/273): False "Parameter value and type do not match" warning when value is a curly brace enclosed expression
 - Fix issue [#275](https://github.com/intersystems/language-server/issues/275): Fix URL encoding for hover Class Reference links
 
 ## [2.3.2] - 2023-03-22
+
 - Fix issue [#265](https://github.com/intersystems/language-server/issues/265): Support HTML spans in intellisense from class descriptions
 - Fix issue [#266](https://github.com/intersystems/language-server/issues/266): Preserve empty HTML spans in intellisense from class descriptions
 - Fix issue [#268](https://github.com/intersystems/language-server/issues/268): Exempt %SYSTEM classes from existence checking after namespace switch
@@ -218,21 +245,25 @@
   - DP-421460: Support comma-delimited list for @keyframes selectors in CSS parser
 
 ## [2.3.1] - 2023-03-02
+
 - Fix issue [#77](https://github.com/intersystems/language-server/issues/77): Incorrect 'Class/Routine/Include file does not exist' Diagnostics after namespace switch
 - Fix issue [#261](https://github.com/intersystems/language-server/issues/261): Add parser support for CSS @keyframes rule
 - Fix issue [#263](https://github.com/intersystems/language-server/issues/263): Add parser support for JavaScript Null Coalescing Operator (??)
 - Fix issue [#264](https://github.com/intersystems/language-server/issues/264): Support HTML tables in intellisense from class descriptions
 
 ## [2.3.0] - 2023-02-13
+
 - Fix issue [#257](https://github.com/intersystems/language-server/issues/257): Property parameter intellisense does not respect `PropertyClass` keyword
 - Fix issue [#259](https://github.com/intersystems/language-server/issues/259): Correctly color DynamicObject brace syntax in Triggers and SqlComputeCodes
 - Fix issue [#260](https://github.com/intersystems/language-server/issues/260): Publish on [Open VSX Registry](https://open-vsx.org/)
 
 ## [2.2.1] - 2023-02-01
+
 - Fix issue [#255](https://github.com/intersystems/language-server/issues/255): Improve the TypeHierarchyProvider fallback behaviour
 - Fix issue [#256](https://github.com/intersystems/language-server/issues/256): Go To Definition may go to wrong class member
 
 ## [2.2.0] - 2023-01-04
+
 - Fix issue [#251](https://github.com/intersystems/language-server/issues/251): "Override Class Members" does not support overriding projections
 - Fix issue [#252](https://github.com/intersystems/language-server/issues/252): Add intellisense for variables created by `%New()`, `%Open()` or `%OpenId()`
 - Fix issue [#254](https://github.com/intersystems/language-server/issues/254): Add Diagnostics for deprecated or superseded `$ZUTIL` functions
@@ -240,24 +271,28 @@
   - DP-419184: Add parser support for `ZBREAK` syntax with braces
 
 ## [2.1.4] - 2022-12-12
+
 - Fix issue [#250](https://github.com/intersystems/language-server/issues/250): Hyperlink class description hover to full Documatic information
 - Parser changes:
   - DP-418357: Enable embedding token recognition for JavaScript template literals
   - DP-418766: Add parser support for `##Quote()`, `##QuoteExp()` and `##BeginQuote text ##EndQuote`
 
 ## [2.1.3] - 2022-10-27
+
 - Fix issue [#248](https://github.com/intersystems/language-server/issues/248): Extension incorrectly prompts for InterSystems Server Credentials when using no authentication
 
 ## [2.1.2] - 2022-10-03
-- Fix issue [#243](https://github.com/intersystems/language-server/issues/243): Scope cookies to a username on a server 
+
+- Fix issue [#243](https://github.com/intersystems/language-server/issues/243): Scope cookies to a username on a server
 - Fix issue [#244](https://github.com/intersystems/language-server/issues/244): Language Server crashes when editing Parameter that has a type
 - Fix issue [#245](https://github.com/intersystems/language-server/issues/245): Add types for Property and Parameter hover headers
 - Fix issue [#246](https://github.com/intersystems/language-server/issues/246): Semantic tokens occasionally disappear during typing
 - Fix issue [#247](https://github.com/intersystems/language-server/issues/247): Catch errors thrown when getting session from Server Manager 3's auth provider
 - Parser changes:
-  - DP-417337: Fix parsing of argumentless commands followed by /* comments
+  - DP-417337: Fix parsing of argumentless commands followed by /\* comments
 
 ## [2.1.1] - 2022-09-19
+
 - Parser changes:
   - DP-416413: Support for `/ENV` Open keyword parameter
   - DP-416891: Support for `/COMPRESS` Open/Use keyword parameter
@@ -265,6 +300,7 @@
   - DP-417035: Parser updates for vector features
 
 ## [2.1.0] - 2022-08-04
+
 - Fix issue [#122](https://github.com/intersystems/language-server/issues/122): Extension settings cannot be set per workspace or per folder
 - Fix issue [#228](https://github.com/intersystems/language-server/issues/228): Add embedded language Request Forwarding for HTML, CSS and JavaScript
 - Fix issue [#240](https://github.com/intersystems/language-server/issues/240): Automatically trigger SignatureHelp when selecting a method or macro `CompletionItem` that takes arguments
@@ -273,6 +309,7 @@
   - DP-415955: Parse command errors when line contains ##class as syntax errors instead of neutral
 
 ## [2.0.5] - 2022-07-25
+
 - Fix issue [#232](https://github.com/intersystems/language-server/issues/232): SignatureHelp intellisense highlights incorrect argument if preceding argument contains a comma
 - Fix issue [#233](https://github.com/intersystems/language-server/issues/233): Support for folding region markers at the class level
 - Fix issue [#234](https://github.com/intersystems/language-server/issues/234): Generated classes do not appear in intellisense for for class names
@@ -282,26 +319,31 @@
 - Fix issue [#239](https://github.com/intersystems/language-server/issues/239): Support nested routine labels in `DocumentSymbolProvider`
 
 ## [2.0.4] - 2022-06-22
+
 - Fix issue [#229](https://github.com/intersystems/language-server/issues/229): `Override Class Members` command may override members that weren't selected
 - Parser, completion and formatting support for columnar storage/vector features.
 
 ## [2.0.3] - 2022-05-23
+
 - Fix issue [#227](https://github.com/intersystems/language-server/issues/227): Upgrade to vscode-languageclient/server version 8.0.0
 - Parser changes:
   - DP-409373: Support Python 3.10 syntax (structural pattern matching and parenthesized context managers)
   - DP-414284: Support referencing quoted class parameters in ObjectScript parser
 
 ## [2.0.2] - 2022-04-25
+
 - Fix issue [#222](https://github.com/intersystems/language-server/issues/222): Language Server crashes when class `Import` keyword is present but empty
 - Fix issue [#224](https://github.com/intersystems/language-server/issues/224): XData parsing does not handle header comments in XML body
 - Fix issue [#225](https://github.com/intersystems/language-server/issues/225): Add hover and completion support for Storage definitions
 - Fix issue [#226](https://github.com/intersystems/language-server/issues/226): Language Server crashes on some Python methods
 
 ## [2.0.1] - 2022-03-31
+
 - Fix issue [#219](https://github.com/intersystems/language-server/issues/219): Language Server REST requests do not use CA certs from OS cert store
 - Fix issue [#220](https://github.com/intersystems/language-server/issues/220): Extension reports noisy error message when REST request fails
 
 ## [2.0.0] - 2022-03-30
+
 - Add support for alpine-x64, alpine-arm64, darwin-arm64 and linux-arm64 platforms.
 - Build parsers as a [Node-API](https://nodejs.org/api/n-api.html) C++ addon.
 - Only parse a document once per content change to avoid unnecessary work.
@@ -317,16 +359,19 @@
   - DP-411463: Add parser support for all CSS units
 
 ## [1.2.9] - 2022-02-15
+
 - Fix issue [#215](https://github.com/intersystems/language-server/issues/215): Fix sorting for generated methods for inherited propeties in completion lists
 - Fix issue [#216](https://github.com/intersystems/language-server/issues/216): Noisy failure when `"active": false` in `objectscript.conn`
 - Fix issue [#217](https://github.com/intersystems/language-server/issues/217): Recognize new `objectscript-int` language id
 
 ## [1.2.8] - 2022-01-13
+
 - Fix issue [#204](https://github.com/intersystems/language-server/issues/204): Class parser interprets modulo operator as a CSP extension
 - Fix issue [#210](https://github.com/intersystems/language-server/issues/210): Add Intellisense for Property data type parameters
 - Fix issue [#211](https://github.com/intersystems/language-server/issues/211): Improve behavior in workspaces with no server connection
 
 ## [1.2.7] - 2021-12-17
+
 - Fix issue [#201](https://github.com/intersystems/language-server/issues/201): Contents of `<EXAMPLE>` HTML tags shown on one line in Intellisense tooltips
 - Fix issue [#202](https://github.com/intersystems/language-server/issues/202): Add handler for `exit` request
 - Fix issue [#203](https://github.com/intersystems/language-server/issues/203): Add `%PARALLEL` to applicable queries that contain `UNION ALL`
@@ -334,10 +379,12 @@
 - Fix issue [#208](https://github.com/intersystems/language-server/issues/208): Add support for new `<arg>`, `<args>` and `<return>` Documatic HTML tags
 
 ## [1.2.6] - 2021-11-05
+
 - Fix issue [#199](https://github.com/intersystems/language-server/issues/199): Extra slash added before `pathPrefix` causes 404 errors
 - Fix issue [#200](https://github.com/intersystems/language-server/issues/200): Update README to point to new `Settings Reference` documentation page
 
 ## [1.2.5] - 2021-10-22
+
 - Fix issue [#193](https://github.com/intersystems/language-server/issues/193): Add error Diagnostic for missing package in class definition line
 - Fix issue [#194](https://github.com/intersystems/language-server/issues/194): Add `TypeHierarchy` support for classes
 - Fix issue [#195](https://github.com/intersystems/language-server/issues/195): HTML parser doesn't recognize CSP `<server>` tag
@@ -345,11 +392,13 @@
 - Fix issue [#198](https://github.com/intersystems/language-server/issues/198): Internally reported parser bugs
 
 ## [1.2.4] - 2021-09-13
+
 - Fix issue [#190](https://github.com/intersystems/language-server/issues/190): Add Diagnostics for Deprecated classes
 - Fix issue [#191](https://github.com/intersystems/language-server/issues/191): Error while hovering over non-existent class
 - Fix issue [#192](https://github.com/intersystems/language-server/issues/192): Internally reported parser bugs
 
 ## [1.2.3] - 2021-08-24
+
 - Fix issue [#170](https://github.com/intersystems/language-server/issues/170): Automatically provide intellisense for certain % variables
 - Fix issue [#178](https://github.com/intersystems/language-server/issues/178): Go to definition (F12) on Labels Case-Sensitive issue
 - Fix issue [#180](https://github.com/intersystems/language-server/issues/180): Go to definition on routine label in another routine doesn't take you to the label
@@ -360,19 +409,23 @@
 - Fix issue [#188](https://github.com/intersystems/language-server/issues/188): Support intellisense for chained method calls
 
 ## [1.2.2] - 2021-06-30
+
 - Fix issue [#169](https://github.com/intersystems/language-server/issues/169): Syntax error Diagnostics are not calculated for Parameter definitions
 - Fix issue [#172](https://github.com/intersystems/language-server/issues/172): Internally reported parser bugs
 - Fix issue [#173](https://github.com/intersystems/language-server/issues/173): Embedded Python support
 
 ## [1.2.1] - 2021-06-16
+
 - Fix issue [#29](https://github.com/intersystems/language-server/issues/29): Semantic token coloring messes up upon deletion
 - Fix issue [#168](https://github.com/intersystems/language-server/issues/168): Go to definition opens wrong routine when two labels are separated by a comma
 
 ## [1.2.0] - 2021-06-09
+
 - PR [#165](https://github.com/intersystems/language-server/issues/165): Introduce QuickFixes and code refactoring functionality
 - Allow extension in untrusted workspaces
 
 ## [1.1.6] - 2021-05-24
+
 - Fix issue [#45](https://github.com/intersystems/language-server/issues/45): When using client side source control, go to definition should use the local file and not open the server version
 - Fix issue [#158](https://github.com/intersystems/language-server/issues/158): Support Intellisense when method arguments appear on multiple lines
 - Fix issue [#161](https://github.com/intersystems/language-server/issues/161): Hovering over macro in CSP file throws an error
@@ -381,6 +434,7 @@
 - Fix issue [#164](https://github.com/intersystems/language-server/issues/164): Parsing fails for files >6000 lines long
 
 ## [1.1.5] - 2021-05-04
+
 - Fix issue [#150](https://github.com/intersystems/language-server/issues/150): Hovering over blank last line of file causes error
 - Fix issue [#151](https://github.com/intersystems/language-server/issues/151): Typing "(" on a blank line causes an error
 - Fix issue [#152](https://github.com/intersystems/language-server/issues/152): Language Server is crashing on startup in Insiders
@@ -391,10 +445,12 @@
 - Fix issue [#159](https://github.com/intersystems/language-server/issues/159): Improve README to explain consequences of setting `"enabled": false` on `editor.semanticTokenColorCustomizations` object
 
 ## [1.1.4] - 2021-04-09
+
 - Fix issue [#74](https://github.com/intersystems/language-server/issues/74): Be an EvaluatableExpressionProvider
 - Fix issue [#146](https://github.com/intersystems/language-server/issues/146): Values for keywords "Owner" and "Aliases" are not tokenized correctly
 
 ## [1.1.3] - 2021-03-10
+
 - Fix issue [#71](https://github.com/intersystems/language-server/issues/71): Override method command
 - Fix issue [#139](https://github.com/intersystems/language-server/issues/139): Don't show methods marked NotInheritable in the completion list
 - Fix issue [#140](https://github.com/intersystems/language-server/issues/140): Hover not working for properties and parameters
@@ -405,14 +461,17 @@
 - Fix issue [#145](https://github.com/intersystems/language-server/issues/145): Compiler keyword completion list includes invalid keywords
 
 ## [1.1.2] - 2021-02-23
+
 - Fix issue [#137](https://github.com/intersystems/language-server/issues/137): Completion request fails for local variables
 
 ## [1.1.1] - 2021-02-23
+
 - Fix issue [#134](https://github.com/intersystems/language-server/issues/134): Outdated documentation for $LISTFROMSTRING
 - Fix issue [#135](https://github.com/intersystems/language-server/issues/135): False syntax error when using 3rd parameter of $LISTFROMSTRING
 - Fix issue [#136](https://github.com/intersystems/language-server/issues/136): Provide Intellisense for methods generated by the member inheritance mechanism
 
 ## [1.1.0] - 2021-02-02
+
 - Fix issue [#15](https://github.com/intersystems/language-server/issues/15): Better support for Peek Definition functionality
 - Fix issue [#125](https://github.com/intersystems/language-server/issues/125): Relationships are not showing up in completion suggestion list
 - Fix issue [#126](https://github.com/intersystems/language-server/issues/126): Macros defined in current file are not showing up in completion suggestion list
@@ -422,6 +481,7 @@
 - Fix issue [#132](https://github.com/intersystems/language-server/issues/132): Update vscode-languageserver and vscode-languageclient to 7.0.0
 
 ## [1.0.7] - 2021-01-26
+
 - Fix issue [#88](https://github.com/intersystems/language-server/issues/88): Properly handle retrigger signatureHelp requests that don't contain an active signature
 - Fix issue [#111](https://github.com/intersystems/language-server/issues/111): Replace requests to POST /action/index with POST /action/query where possible
 - Fix issue [#112](https://github.com/intersystems/language-server/issues/112): Parsing problem with $system.SQL
@@ -436,6 +496,7 @@
 - Fix issue [#124](https://github.com/intersystems/language-server/issues/124): Goto definition fails with server:namespace definition
 
 ## [1.0.6] - 2020-12-16
+
 - Fix issue [#19](https://github.com/intersystems/language-server/issues/19): do {} while in SqlComputeCode marked as a syntax error
 - Fix issue [#39](https://github.com/intersystems/language-server/issues/39): embeded &js syntax
 - Fix issue [#56](https://github.com/intersystems/language-server/issues/56): attempt to zw the value of a returned object is highlighted as a syntax error
@@ -464,6 +525,7 @@
 - Fix issue [#109](https://github.com/intersystems/language-server/issues/109): Activate color theme for workspace only
 
 ## [1.0.5] - 2020-11-12
+
 - Fix issue [#52](https://github.com/intersystems/language-server/issues/52): Request textDocument/documentSymbol failed with message: Cannot read property 'p' of undefined
 - Fix issue [#53](https://github.com/intersystems/language-server/issues/53): Become a FoldingRangeProvider
 - Fix issue [#54](https://github.com/intersystems/language-server/issues/54): Completion request fails when "." is typed as first non-whitespace character on a line
@@ -482,6 +544,7 @@
 - Fix issue [#82](https://github.com/intersystems/language-server/issues/82): Incorrect destination go to definition
 
 ## [1.0.4] - 2020-10-28
+
 - Fix issue [#27](https://github.com/intersystems/language-server/issues/27): DeprecationWarning in LS Output channel at startup
 - Fix issue [#31](https://github.com/intersystems/language-server/issues/31): Issue with syntax coloring when Japanese(UTF8) letters are included
 - Fix issue [#44](https://github.com/intersystems/language-server/issues/44): prompt for "use dark theme" if i'm using a dark vscode background
@@ -490,16 +553,20 @@
 - Fix issue [#50](https://github.com/intersystems/language-server/issues/50): Go to definition for method of current class in client-side editing mode shouldn't open server version
 
 ## [1.0.3] - 2020-10-26
+
 - Fix issue [#41](https://github.com/intersystems/language-server/issues/41): Still scope for reducing number of web sessions 1.0.2 creates
 
 ## [1.0.2] - 2020-10-23
+
 - Fix issue [#23](https://github.com/intersystems/language-server/issues/23): Hover and Go to macro definition in the same place and in macro definition
 - Fix issue [#33](https://github.com/intersystems/language-server/issues/33): Requests to the API does not use cookie
 - Fix issue [#34](https://github.com/intersystems/language-server/issues/34): Go to definition (F12) throwing error
 - Fix issue [#40](https://github.com/intersystems/language-server/issues/40): Is it possible to switch off absent classes detection?
 
 ## [1.0.1] - 2020-10-21
+
 - ~~Fix issue [#33](https://github.com/intersystems/language-server/issues/33): Requests to the API does not use cookie~~
 
 ## [1.0.0] - 2020-10-20
+
 - Initial release

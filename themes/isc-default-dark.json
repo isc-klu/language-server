@@ -19,7 +19,7 @@
 		"sideBarSectionHeader.border": "#cccccc33",
 		"sideBarTitle.foreground": "#bbbbbb",
 		"statusBarItem.remoteBackground": "#16825d",
-		"statusBarItem.remoteForeground": "#ffffff",
+		"statusBarItem.remoteForeground": "#ffffff"
 		//"activityBar.activeBorder": "#ffffff",
 		//"activityBar.background": "#333333",
 		//"activityBar.dropBorder": "#ffffff",
@@ -375,10 +375,7 @@
 	},
 	"tokenColors": [
 		{
-			"scope": [
-				"meta.embedded",
-				"source.groovy.embedded"
-			],
+			"scope": ["meta.embedded", "source.groovy.embedded"],
 			"settings": {
 				"foreground": "#D4D4D4"
 			}
@@ -540,10 +537,7 @@
 			}
 		},
 		{
-			"scope": [
-				"meta.preprocessor",
-				"entity.name.function.preprocessor"
-			],
+			"scope": ["meta.preprocessor", "entity.name.function.preprocessor"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
@@ -585,20 +579,13 @@
 			}
 		},
 		{
-			"scope": [
-				"storage.modifier",
-				"keyword.operator.noexcept"
-			],
+			"scope": ["storage.modifier", "keyword.operator.noexcept"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
 		},
 		{
-			"scope": [
-				"string",
-				"entity.name.operator.custom-literal.string",
-				"meta.embedded.assembly"
-			],
+			"scope": ["string", "entity.name.operator.custom-literal.string", "meta.embedded.assembly"],
 			"settings": {
 				"foreground": "#CE9178"
 			}
@@ -632,9 +619,7 @@
 			}
 		},
 		{
-			"scope": [
-				"meta.template.expression"
-			],
+			"scope": ["meta.template.expression"],
 			"settings": {
 				"foreground": "#D4D4D4"
 			}
@@ -694,10 +679,7 @@
 			}
 		},
 		{
-			"scope": [
-				"punctuation.section.embedded.begin.php",
-				"punctuation.section.embedded.end.php"
-			],
+			"scope": ["punctuation.section.embedded.begin.php", "punctuation.section.embedded.end.php"],
 			"settings": {
 				"foreground": "#569CD6"
 			}
@@ -715,11 +697,7 @@
 			}
 		},
 		{
-			"scope": [
-				"storage.modifier.import.java",
-				"variable.language.wildcard.java",
-				"storage.modifier.package.java"
-			],
+			"scope": ["storage.modifier.import.java", "variable.language.wildcard.java", "storage.modifier.package.java"],
 			"settings": {
 				"foreground": "#D4D4D4"
 			}
@@ -809,29 +787,19 @@
 			}
 		},
 		{
-			"scope": [
-				"variable",
-				"meta.definition.variable.name",
-				"support.variable",
-				"entity.name.variable"
-			],
+			"scope": ["variable", "meta.definition.variable.name", "support.variable", "entity.name.variable"],
 			"settings": {
 				"foreground": "#9CDCFE"
 			}
 		},
 		{
-			"scope": [
-				"variable.other.constant",
-				"variable.other.enummember"
-			],
+			"scope": ["variable.other.constant", "variable.other.enummember"],
 			"settings": {
 				"foreground": "#4FC1FF"
 			}
 		},
 		{
-			"scope": [
-				"meta.object-literal.key"
-			],
+			"scope": ["meta.object-literal.key"],
 			"settings": {
 				"foreground": "#9CDCFE"
 			}
@@ -876,10 +844,7 @@
 			}
 		},
 		{
-			"scope": [
-				"keyword.operator.or.regexp",
-				"keyword.control.anchor.regexp"
-			],
+			"scope": ["keyword.operator.or.regexp", "keyword.control.anchor.regexp"],
 			"settings": {
 				"foreground": "#DCDCAA"
 			}
@@ -932,29 +897,29 @@
 				"foreground": "#B267E6"
 			}
 		}
-    ],
-    "semanticHighlighting": true,
-    "semanticTokenColors": {
-        "ISC_Error": {"foreground": "#ff8484", "bold": true},
-        "ISC_Comment": "#80bd66",
-        "ISC_StringLiteral": "#d4b57c",
-        "ISC_NumericLiteral": "#d4b57c",
-        "ISC_ClassName": "#4EC9B0",
-        "ISC_ClassMember": "#DCDCAA",
-        "ISC_DocComment": "#80bd66",
-        "ISC_Parameter": "#ff75f4",
-        "ISC_System": "#85a6ff",
-        "ISC_Command": "#ffffff",
-        "ISC_Keyword": "#85a6ff",
-        "ISC_LocalVariable": "#ade2ff",
-        "ISC_LocalVariableUnset": "#ade2ff",
-        "ISC_PublicVariable": "#64c9ff",
-        "ISC_SQLKeyword": "#ffffff",
+	],
+	"semanticHighlighting": true,
+	"semanticTokenColors": {
+		"ISC_Error": { "foreground": "#ff8484", "bold": true },
+		"ISC_Comment": "#80bd66",
+		"ISC_StringLiteral": "#d4b57c",
+		"ISC_NumericLiteral": "#d4b57c",
+		"ISC_ClassName": "#4EC9B0",
+		"ISC_ClassMember": "#DCDCAA",
+		"ISC_DocComment": "#80bd66",
+		"ISC_Parameter": "#ff75f4",
+		"ISC_System": "#85a6ff",
+		"ISC_Command": "#ffffff",
+		"ISC_Keyword": "#85a6ff",
+		"ISC_LocalVariable": "#ade2ff",
+		"ISC_LocalVariableUnset": "#ade2ff",
+		"ISC_PublicVariable": "#64c9ff",
+		"ISC_SQLKeyword": "#ffffff",
 		"ISC_SQLFunction": "#85a6ff",
-		"ISC_Neutral": {"foreground": "#ffffff", "italic": true},
+		"ISC_Neutral": { "foreground": "#ffffff", "italic": true },
 		"XML_Grayout": "#aaaaaa",
 		"ISC_Operator": "#ffffff",
 		"ISC_Delimiter": "#ffffff",
 		"ISC_MarkupText": "#ffffff"
-    }
+	}
 }
