@@ -1814,5 +1814,9 @@
   },
   "extensionDependencies": [
     "intersystems-community.vscode-objectscript"
-  ]
+  ],
+  "prettier": {
+    "printWidth": 999,
+    "useTabs": true
+  }
 }
