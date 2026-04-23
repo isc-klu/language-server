@@ -2,7 +2,7 @@ import { Position, TextDocumentPositionParams, Range, LocationLink, uinteger } f
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { getServerSpec, findFullRange, normalizeClassname, makeRESTRequest, createDefinitionUri, getMacroContext, isMacroDefinedAbove, quoteUDLIdentifier, getClassMemberContext, determineClassNameParameterClass, getParsedDocument, currentClass, getTextForUri, isClassMember, memberRegex, urlMapAttribute } from '../utils/functions';
 import { ServerSpec, QueryData, compressedline } from '../utils/types';
-import { documents, corePropertyParams, classMemberTypes, mppContinue, getAnalyzedClass, getAnalyzedMember } from '../utils/variables';
+import { documents, corePropertyParams, classMemberTypes, mppContinue, getAnalyzedClass, getAnalyzedClassMember } from '../utils/variables';
 import * as ld from '../utils/languageDefinitions';
 
 /**
@@ -12,7 +12,7 @@ import * as ld from '../utils/languageDefinitions';
 const definitionTargetRangeMaxLines: number = 10;
 
 function lookupClassMember(clsName: string, memName: string, originSelectionRange: Range): LocationLink[] | null {
-	const uri_cls_mem = getAnalyzedMember(clsName, memName);
+	const uri_cls_mem = getAnalyzedClassMember(clsName, memName);
 	if (!uri_cls_mem) {
 		return null;
 	}

@@ -1,7 +1,7 @@
 import { Position, TextDocumentPositionParams, Range, MarkupKind, Hover } from 'vscode-languageserver/node';
 import { getServerSpec, getLanguageServerSettings, findFullRange, normalizeClassname, makeRESTRequest, documaticHtmlToMarkdown, getMacroContext, isMacroDefinedAbove, haltOrHang, quoteUDLIdentifier, getClassMemberContext, beautifyFormalSpec, determineClassNameParameterClass, storageKeywordsKeyForToken, getParsedDocument, currentClass, determineVariableClass, macroDefToDoc, urlMapAttribute } from '../utils/functions';
 import { ServerSpec, QueryData, CommandDoc, KeywordDoc } from '../utils/types';
-import { documents, corePropertyParams, mppContinue, getAnalyzedClass, getAnalyzedMember } from '../utils/variables';
+import { documents, corePropertyParams, mppContinue, getAnalyzedClass, getAnalyzedClassMember } from '../utils/variables';
 import * as ld from '../utils/languageDefinitions';
 
 import commands from "../documentation/commands.json";
@@ -561,7 +561,7 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 					return null;
 				}
 
-				const memberInfo = getAnalyzedMember(membercontext.baseclass, unquotedname);
+				const memberInfo = getAnalyzedClassMember(membercontext.baseclass, unquotedname);
 				if (memberInfo) {
 					return {
 						contents: {

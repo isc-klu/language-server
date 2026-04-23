@@ -1,7 +1,7 @@
 import { CompletionItem, CompletionItemKind, CompletionItemTag, CompletionParams, InsertTextFormat, MarkupKind, Position, Range, TextEdit } from 'vscode-languageserver/node';
 import { getServerSpec, getLanguageServerSettings, getMacroContext, makeRESTRequest, normalizeSystemName, getImports, findFullRange, getClassMemberContext, quoteUDLIdentifier, documaticHtmlToMarkdown, determineClassNameParameterClass, storageKeywordsKeyForToken, getParsedDocument, currentClass, normalizeClassname, macroDefToDoc, showInternalForServer } from '../utils/functions';
-import { ServerSpec, QueryData, KeywordDoc, MacroContext, compressedline, LanguageServerConfiguration } from '../utils/types';
-import { documents, corePropertyParams, mppContinue } from '../utils/variables';
+import { ServerSpec, QueryData, KeywordDoc, MacroContext, compressedline, LanguageServerConfiguration, ClassMemberContext } from '../utils/types';
+import { documents, corePropertyParams, mppContinue, analyzedDocuments, getAnalyzedClassMembers } from '../utils/variables';
 import * as ld from '../utils/languageDefinitions';
 
 import structuredSystemVariables from "../documentation/structuredSystemVariables.json";
@@ -590,6 +590,17 @@ async function completionFullClassName(doc: TextDocument, parsed: compressedline
 			result.push(compItem);
 		}
 	}
+	// Add locally available classes
+	for (const [uri, cls] of analyzedDocuments) {
+		if (cls === undefined) {
+			continue
+		}
+		result.push({
+			label: cls.name.text,
+			kind: CompletionItemKind.Class,
+			data: ["class", (cls.name.text), uri]
+		})
+	}
 	return result;
 };
 
@@ -1148,6 +1159,18 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					});
 				}
 			}
+
+			// Add locally available classes
+			for (const [uri, cls] of analyzedDocuments) {
+				if (cls === undefined || !cls.name.text.startsWith(filter)) {
+					continue
+				}
+				result.push({
+					label: cls.name.text.slice(filter.length),
+					kind: CompletionItemKind.Class,
+					data: ["class", (cls.name.text.slice(filter.length)), uri]
+				})
+			}
 		}
 		else if (globalOrRoutineMatch && triggerlang == ld.cos_langindex) {
 			// This might be a routine or global
@@ -1167,12 +1190,29 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					return null;
 				}
 
+				// Add locally source information
+				for (const [_uri, _cls, mem] of getAnalyzedClassMembers(membercontext.baseclass)) {
+					if (mem.kind.tag === "parameter") {
+						const name = mem.name.text;
+						result.push({
+							label: "#" + name,
+							kind: CompletionItemKind.Constant,
+							data: "member",
+							documentation: {
+								kind: MarkupKind.Markdown,
+								value: documaticHtmlToMarkdown(mem.doc)
+							},
+							sortText: name,
+							insertText: name,
+							detail: mem.kind.value.t
+						})
+					}
+				}
 				// Query the server to get the names and descriptions of all parameters
 				const data: QueryData = {
-					query: `SELECT Name, Description, Origin, Type, Deprecated FROM %Dictionary.CompiledParameter WHERE Parent = ?${membercontext.context == "instance" ? " AND (parent->ClassType IS NULL OR parent->ClassType != 'datatype')" : ""
-						}${internalStr}${deprecatedStr}`,
+					query: `SELECT Name, Description, Origin, Type, Deprecated FROM %Dictionary.CompiledParameter WHERE Parent = ?${membercontext.context == "instance" ? " AND (parent->ClassType IS NULL OR parent->ClassType != 'datatype')" : ""}${internalStr}${deprecatedStr}`,
 					parameters: [membercontext.baseclass]
-				}
+				};
 				const respdata = await makeRESTRequest("POST", 1, "/action/query", server, data);
 				if (Array.isArray(respdata?.data?.result?.content) && respdata.data.result.content.length > 0) {
 					// We got data back
@@ -1216,6 +1256,38 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 				}
 
 				// Query the server to get the metadata of all appropriate class members
+				for (const [_uri, _cls, mem] of getAnalyzedClassMembers(membercontext.baseclass)) {
+					const name = quoteUDLIdentifier(mem.name.text, 1);
+					const item: CompletionItem = {
+						label: name,
+						kind: CompletionItemKind.Property,
+						data: "member",
+						documentation: {
+							kind: MarkupKind.Markdown,
+							value: documaticHtmlToMarkdown(mem.doc)
+						},
+						sortText: name,
+						insertText: name,
+					}
+					if (mem.kind.tag === "classMethod" || mem.kind.tag === "method" || mem.kind.tag === "clientMethod") {
+						item.kind = CompletionItemKind.Method;
+						if (mem.kind.value.args.length == 0) {
+							item.insertText += "()"
+						} else {
+							item.textEdit = TextEdit.insert(params.position, name.replace(/\$/g, "//$") + "($0)");
+							item.insertTextFormat = InsertTextFormat.Snippet;
+							item.command = {
+								title: "Show SignatureHelp",
+								command: "editor.action.triggerParameterHints"
+							};	
+						}
+					} else if (mem.kind.tag === "parameter") {
+						item.kind = CompletionItemKind.Constant
+						item.insertText = "#" + name;
+					}
+					result.push(item);
+				}
+
 				const data: QueryData = {
 					query: "",
 					parameters: []
@@ -1267,7 +1339,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 							"SELECT parent->name||Name AS Name, Description, parent->Origin AS Origin, FormalSpec, ReturnType AS Type, 'method' AS MemberType, Deprecated " +
 							`FROM %Dictionary.CompiledPropertyMethod WHERE parent->Parent = ? AND ClassMethod = 1${internalStr}${deprecatedStr} UNION ALL %PARALLEL ` +
 							"SELECT parent->name||Name AS Name, Description, parent->Origin AS Origin, FormalSpec, ReturnType AS Type, 'method' AS MemberType, Deprecated " +
-							`FROM %Dictionary.CompiledConstraintMethod WHERE parent->Parent = ? AND ClassMethod = 1${internalStr}${deprecatedStr}`
+							`FROM %Dictionary.CompiledConstraintMethod WHERE parent->Parent = ? AND ClassMethod = 1${internalStr}${deprecatedStr}`;
 						data.parameters.push(...new Array(4).fill(membercontext.baseclass));
 					}
 				}
