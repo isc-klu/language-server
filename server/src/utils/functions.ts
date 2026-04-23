@@ -695,7 +695,7 @@ export async function normalizeClassname(
 				query: "SELECT Name FROM %Dictionary.ClassDefinition WHERE $PIECE(Name,'.',$LENGTH(Name,'.')) = ?",
 				parameters: [clsname]
 			};
-			const respdata = await makeRESTRequest("POST", 1, "/action/query", server, querydata);
+			const respdata = await makeRESTRequest<{ content: any[] }>("POST", 1, "/action/query", server, querydata);
 			if (Array.isArray(respdata?.data?.result?.content) && respdata.data.result.content.length > 0) {
 				if (respdata.data.result.content.length === 1) {
 					// We got back exactly one class
@@ -1019,6 +1019,12 @@ export async function getClassMemberContext(
 	return result;
 };
 
+interface ResponseData<Result = any> {
+	data: {
+		result: Result;
+	};
+}
+
 /**
  * Send a REST request to an InterSystems server.
  * 
@@ -1030,7 +1036,7 @@ export async function getClassMemberContext(
  * @param checksum Optional checksum. Only passed for SASchema requests.
  * @param params Optional URL parameters. Only passed for GET /doc/ requests.
  */
-export async function makeRESTRequest(method: "GET" | "POST", api: number, path: string, server: ServerSpec, data?: any, checksum?: string, params?: any): Promise<any | undefined> {
+export async function makeRESTRequest<Result = any>(method: "GET" | "POST", api: number, path: string, server: ServerSpec, data?: any, checksum?: string, params?: any): Promise<ResponseData<Result> | undefined> {
 	// As of version 2.0.0, REST requests are made on the client side
 	return connection.sendRequest("intersystems/server/makeRESTRequest", {
 		method,
@@ -1040,7 +1046,7 @@ export async function makeRESTRequest(method: "GET" | "POST", api: number, path:
 		data,
 		checksum,
 		params
-	}).then((respdata) => respdata ?? undefined);
+	}).then((respdata: any) => respdata ?? undefined);
 }
 
 /**

@@ -1074,7 +1074,7 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 				const storageObjKey = storageKeywordsKeyForToken(doc, parsed, params.position.line, i);
 				if (storageObjKey != "") {
 					// Get the list of all possible elements at this nesting level
-					const keywords: KeywordDoc[] = storageKeywords[storageObjKey];
+					const keywords: KeywordDoc[] = (storageKeywords as any)[storageObjKey];
 					if (keywords) {
 						const keydoc = keywords.find((keyword) => keyword.name.toLowerCase() == elem.toLowerCase());
 						if (keydoc !== undefined) {

@@ -1,14 +1,13 @@
 {
 	"compilerOptions": {
 		"target": "es6",
-		"module": "Node16",
+		"module": "node16",
 		"moduleResolution": "node16",
 		"sourceMap": true,
 		"strict": true,
 		"strictNullChecks": false,
 		"outDir": "out",
 		"rootDir": "src",
-		"noImplicitAny": false,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
 		"allowJs": true

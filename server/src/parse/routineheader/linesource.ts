@@ -29,14 +29,14 @@ export class LineSource {
         }
         this.markedpos = this.pos;
     }
-    
+
     /**
      * Return true if we're at the end of the line.
      */
     public ended(): boolean {
         return this.pos === this.line.length;
     }
-    
+
     /**
      * Return the character at the current position.
      */
@@ -49,7 +49,7 @@ export class LineSource {
      * @param offset how many characters to skip over.
      */
     public advance(offset: number) {
-        if (this.pos+offset > this.line.length) {
+        if (this.pos + offset > this.line.length) {
             throw Error('LineSource.advance: advancing past end of line');
         }
         this.pos += offset;
@@ -73,7 +73,7 @@ export class LineSource {
      * Return the uncolored part of the line up to the current position.
      */
     public getToken(): string {
-        return this.line.substring(this.markedpos,this.pos);
+        return this.line.substring(this.markedpos, this.pos);
     }
 
     /**
@@ -86,11 +86,11 @@ export class LineSource {
     /**
      * Color the current token as error.
      */
-    public commitError(error) {
+    public commitError(error: any) {
         this.commitToken(error_attrindex);
-        if (error instanceof Error && error.message.length) this.coloring[this.coloring.length-1].e = error.message;
+        if (error instanceof Error && error.message.length) this.coloring[this.coloring.length - 1].e = error.message;
     }
-    
+
     /**
      * Color the current token.
      * @param attrindex the color
@@ -99,7 +99,7 @@ export class LineSource {
         if (this.markedpos === this.pos) {
             throw Error('LineSource.commitToken: region to color is empty');
         }
-        this.coloring.push(this.coloringFor(this.markedpos,this.pos,attrindex));
+        this.coloring.push(this.coloringFor(this.markedpos, this.pos, attrindex));
         if (attrindex === error_attrindex) {
             this.anycoloringerrors = true;
         }
@@ -109,12 +109,12 @@ export class LineSource {
     /**
      * Re-color the most-recently-colored token as error.
      */
-    public colorLastAsError(error) {
+    public colorLastAsError(error: any) {
         if (this.coloring.length === 0) {
             throw Error('LineSource.colorLastAsError: no coloring available to change');
         }
-        this.coloring[this.coloring.length-1].s = error_attrindex;
-        if (error instanceof Error && error.message.length) this.coloring[this.coloring.length-1].e = error.message;
+        this.coloring[this.coloring.length - 1].s = error_attrindex;
+        if (error instanceof Error && error.message.length) this.coloring[this.coloring.length - 1].e = error.message;
         this.anycoloringerrors = true;
     }
 
@@ -134,9 +134,9 @@ export class LineSource {
     }
 
     private coloringFor(startpos: number, afterendpos: number, attrindex: number): compresseditem {
-        return {'p': startpos, 'c': (afterendpos-startpos), 'l': cos_langindex, 's': attrindex};
+        return { 'p': startpos, 'c': (afterendpos - startpos), 'l': cos_langindex, 's': attrindex };
     }
-    
+
     /**
      * The original line.
      */

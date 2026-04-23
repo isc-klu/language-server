@@ -2061,7 +2061,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 		const storageObjKey = storageKeywordsKeyForToken(doc, parsed, params.position.line, thistoken);
 		if (storageObjKey != "") {
 			// Get the list of all possible elements at this nesting level
-			const keywords: KeywordDoc[] = storageKeywords[storageObjKey];
+			const keywords: KeywordDoc[] = (storageKeywords as any)[storageObjKey];
 			if (keywords) {
 				if (storageObjKey != "STORAGE") {
 					// Add an entry for the closing tag of the parent
@@ -2074,8 +2074,8 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 						longestStart = stgKey;
 					}
 					if (longestStart.length) {
-						const parentKeyDoc = storageKeywords[longestStart].find(
-							(keydoc) => keydoc.name.toUpperCase() == storageObjKey.slice(longestStart.length)
+						const parentKeyDoc = (storageKeywords as any)[longestStart].find(
+							(keydoc: any) => keydoc.name.toUpperCase() == storageObjKey.slice(longestStart.length)
 						);
 						if (parentKeyDoc) {
 							result.push({
@@ -2109,7 +2109,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 						}
 					};
 
-					const childKeys: KeywordDoc[] = storageKeywords[storageObjKey + keydoc.name.toUpperCase()];
+					const childKeys: KeywordDoc[] = (storageKeywords as any)[storageObjKey + keydoc.name.toUpperCase()];
 					if (childKeys && childKeys.findIndex((childkey) => childkey.name == "Name") != -1) {
 						// This element has a name, so it needs to be included as an attribute
 						if (keydoc.type == "KW_TYPE_SUBNODE") {

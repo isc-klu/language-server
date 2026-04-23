@@ -1270,7 +1270,7 @@ export async function onDiagnostics(params: DocumentDiagnosticParams): Promise<D
 			}
 
 			// Make the request
-			const respdata = await makeRESTRequest("POST", 1, "/action/query", { ...server, namespace }, querydata);
+			const respdata = await makeRESTRequest<{ content: any[] }>("POST", 1, "/action/query", { ...server, namespace }, querydata);
 			if (Array.isArray(respdata?.data?.result?.content) && respdata.data.result.content.length > 0) {
 				// We got data back
 

@@ -996,7 +996,7 @@ export async function onDefinition(params: TextDocumentPositionParams) {
 				let originclass = "";
 				if (superclasses.length && thisMethod) {
 					// Get the list of allsuperclasses that have this method
-					const queryrespdata = await makeRESTRequest("POST", 1, "/action/query", server, {
+					const queryrespdata = await makeRESTRequest<{ content: any[] }>("POST", 1, "/action/query", server, {
 						query: "SELECT Origin, Parent AS Super FROM %Dictionary.CompiledMethod WHERE Name = ? AND Parent %INLIST $LISTFROMSTRING(?)",
 						parameters: [quoteUDLIdentifier(thisMethod, 0), superclasses.join(",")]
 					});

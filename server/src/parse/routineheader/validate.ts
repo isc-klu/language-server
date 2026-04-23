@@ -26,9 +26,9 @@ export function validateKeyword(linesource: LineSource, keyword: string, seenkey
         if (uckeyword in seenkeywords) {
             throw Error(`${uckeyword[0] + uckeyword.slice(1).toLowerCase()} appears more than once`);
         }
-    
+
         // note that we've seen this keyword
-        seenkeywords[uckeyword] = '';
+        (seenkeywords as any)[uckeyword] = '';
     }
     catch (error) {
         syntaxerror = error;
@@ -40,7 +40,7 @@ export function validateKeyword(linesource: LineSource, keyword: string, seenkey
     else {
         linesource.commitToken(cos_label_attrindex);
     }
-}    
+}
 
 
 /**
@@ -58,16 +58,16 @@ export function validateKeywordValue(linesource: LineSource, keyword: string, va
     let attrindex = -1;
 
     try {
-    
+
         switch (uckeyword) {
-    
+
             // TYPE
             case UCTYPE: {
-    
+
                 if (typeof value === 'undefined') {
                     throw Error('Missing value for Type');
                 }
-        
+
                 if (!isValidTYPEValue(value)) {
                     throw Error("Type must be one of MAC, INT, INC, BAS, MVB, or MVI");
                 }
@@ -75,17 +75,17 @@ export function validateKeywordValue(linesource: LineSource, keyword: string, va
                 routineheaderinfo.routinetype = value.toUpperCase();
 
                 attrindex = cos_name_attrindex;
-                
+
                 break;
             }
-    
+
             // LANGUAGEMODE
             case UCLANGUAGEMODE: {
-    
+
                 if (typeof value === 'undefined') {
                     throw Error('Missing value for LanguageMode');
                 }
-        
+
                 const valuemode = Number(value);
                 if (isNaN(valuemode) || valuemode < 0) {
                     throw Error('LanguageMode must be an integer')
@@ -97,7 +97,7 @@ export function validateKeywordValue(linesource: LineSource, keyword: string, va
 
                 break;
             }
-    
+
             // GENERATED
             case UCGENERATED: {
 
@@ -109,7 +109,7 @@ export function validateKeywordValue(linesource: LineSource, keyword: string, va
 
                 break;
             }
-    
+
             default: {
                 throw Error('Unknown keyword'); // this shouldn't happen because the keyword should have been validated by the caller
             }
@@ -119,7 +119,7 @@ export function validateKeywordValue(linesource: LineSource, keyword: string, va
     catch (error) {
         syntaxerror = error;
     }
-    
+
     if (typeof value !== 'undefined') {
 
         if (syntaxerror) {
