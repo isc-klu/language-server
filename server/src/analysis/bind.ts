@@ -2,14 +2,26 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+/* eslint-disable @typescript-eslint/ban-types */
 import * as $wcm from '@vscode/wasm-component-model';
-import type { i32, ptr, result } from '@vscode/wasm-component-model';
+import type { u8, i32, ptr, result } from '@vscode/wasm-component-model';
 
 export namespace Analyst {
+	export type SrcLoc = {
+		ln: u8;
+		cn: u8;
+	};
+
+	export type NameInfo = {
+		before: SrcLoc;
+		text: string;
+		after: SrcLoc;
+	};
+
 	export type Arg = {
 		byRef: boolean;
 		variadic: boolean;
-		name: string;
+		name: NameInfo;
 		t?: string | undefined;
 	};
 
@@ -166,13 +178,15 @@ export namespace Analyst {
 
 	export type MemberInfo = {
 		doc: string;
-		name: string;
+		before: SrcLoc;
+		name: NameInfo;
 		kind: MemberKind;
+		after: SrcLoc;
 	};
 
 	export type ClassInfo = {
 		doc: string;
-		name: string;
+		name: NameInfo;
 		extends: string[];
 		members: MemberInfo[];
 	};
@@ -206,10 +220,19 @@ export namespace myWorld {
 }
 
 export namespace Analyst.$ {
+	export const SrcLoc = new $wcm.RecordType<Analyst.SrcLoc>([
+		['ln', $wcm.u8],
+		['cn', $wcm.u8],
+	]);
+	export const NameInfo = new $wcm.RecordType<Analyst.NameInfo>([
+		['before', SrcLoc],
+		['text', $wcm.wstring],
+		['after', SrcLoc],
+	]);
 	export const Arg = new $wcm.RecordType<Analyst.Arg>([
 		['byRef', $wcm.bool],
 		['variadic', $wcm.bool],
-		['name', $wcm.wstring],
+		['name', NameInfo],
 		['t', new $wcm.OptionType<string>($wcm.wstring)],
 	]);
 	export const MethodInfo = new $wcm.RecordType<Analyst.MethodInfo>([
@@ -223,16 +246,18 @@ export namespace Analyst.$ {
 	export const MemberKind = new $wcm.VariantType<Analyst.MemberKind, Analyst.MemberKind._tt, Analyst.MemberKind._vt>([['parameter', ParameterInfo], ['property', new $wcm.OptionType<string>($wcm.wstring)], ['relationship', new $wcm.OptionType<string>($wcm.wstring)], ['foreignKey', undefined], ['index', undefined], ['projection', undefined], ['trigger', undefined], ['xData', undefined], ['storage', undefined], ['query', undefined], ['method', MethodInfo], ['classMethod', MethodInfo], ['clientMethod', MethodInfo]], Analyst.MemberKind._ctor);
 	export const MemberInfo = new $wcm.RecordType<Analyst.MemberInfo>([
 		['doc', $wcm.wstring],
-		['name', $wcm.wstring],
+		['before', SrcLoc],
+		['name', NameInfo],
 		['kind', MemberKind],
+		['after', SrcLoc],
 	]);
 	export const ClassInfo = new $wcm.RecordType<Analyst.ClassInfo>([
 		['doc', $wcm.wstring],
-		['name', $wcm.wstring],
+		['name', NameInfo],
 		['extends', new $wcm.ListType<string>($wcm.wstring)],
 		['members', new $wcm.ListType<Analyst.MemberInfo>(MemberInfo)],
 	]);
-	export const analyzeClass = new $wcm.FunctionType<Analyst.analyzeClass>('analyze-class', [
+	export const analyzeClass = new $wcm.FunctionType<Analyst.analyzeClass>('analyze-class',[
 		['src', $wcm.wstring],
 	], new $wcm.ResultType<Analyst.ClassInfo, string>(ClassInfo, $wcm.wstring, $wcm.wstring.Error));
 }
@@ -240,6 +265,8 @@ export namespace Analyst._ {
 	export const id = 'iris:udl/analyst' as const;
 	export const witName = 'analyst' as const;
 	export const types: Map<string, $wcm.AnyComponentModelType> = new Map<string, $wcm.AnyComponentModelType>([
+		['SrcLoc', $.SrcLoc],
+		['NameInfo', $.NameInfo],
 		['Arg', $.Arg],
 		['MethodInfo', $.MethodInfo],
 		['ParameterInfo', $.ParameterInfo],

@@ -15,21 +15,21 @@ export const parsedDocuments: Map<string, compressedline[] | undefined> = new Ma
 export const analyzedDocuments: Map<string, ClassInfo | undefined> = new Map();
 export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 	for (const [uri, info] of analyzedDocuments) {
-		if (info.name === name) {
+		if (info.name.text === name) {
 			return [uri, info];
 		}
 	}
 	return null;
 }
-export function getAnalyzedMember(clsName: string, memName: string): MemberInfo | null {
+export function getAnalyzedMember(clsName: string, memName: string): [string, ClassInfo, MemberInfo] | null {
 	const uri_cls = getAnalyzedClass(clsName);
 	if (!uri_cls) {
 		return null;
 	}
-	const cls = uri_cls[1];
+	const [uri, cls] = uri_cls;
 	for (const mem of cls.members) {
-		if (mem.name === memName) {
-			return mem;
+		if (mem.name.text === memName) {
+			return [uri, cls, mem];
 		}
 	}
 	for (const sup of cls.extends) {

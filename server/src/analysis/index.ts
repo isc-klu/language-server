@@ -38,7 +38,8 @@ const analyzeClassPromise = getAnalyzeClass();
 export async function analyzeClass(src: string): Promise<ClassInfo | undefined> {
 	try {
 		return (await analyzeClassPromise)(src);
-	} catch {
+	} catch (err) {
+		console.log(err)
 		return undefined;
 	}
 }
