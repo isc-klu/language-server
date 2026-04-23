@@ -1791,7 +1791,7 @@
     "watch": "tsc -b -w",
     "clean": "rimraf client/out && rimraf server/out",
     "lint": "eslint && prettier --check .",
-    "lint-fix": "eslint --fix",
+    "lint-fix": "prettier --write . && eslint --fix",
     "postinstall": "cd client && npm install && cd ../server && npm install && cd .."
   },
   "devDependencies": {
