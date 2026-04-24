@@ -365,7 +365,7 @@ export async function onSignatureHelp(params: SignatureHelpParams): Promise<Sign
 			// Get the method signature
 
 			// Get the method signature locally
-			let methodSignatureHelp = getMethodSignatureHelpLocally(
+			const methodSignatureHelp = getMethodSignatureHelpLocally(
 				membercontext.baseclass,
 				member,
 				settings.signaturehelp.documentation,

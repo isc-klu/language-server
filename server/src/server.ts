@@ -1,4 +1,9 @@
-import { DidChangeConfigurationNotification, TextDocumentSyncKind, CodeActionKind } from "vscode-languageserver/node";
+import {
+	DidChangeConfigurationNotification,
+	TextDocumentSyncKind,
+	CodeActionKind,
+	WorkspaceFolder,
+} from "vscode-languageserver/node";
 import { URI } from "vscode-uri";
 
 import { onPrepare, onSubtypes, onSupertypes } from "./providers/typeHierarchy";
@@ -42,7 +47,8 @@ import { parseDocument, getLegend } from "./parse/parse";
 import { isolateEmbeddedLanguage, languageAtPosition } from "./providers/requestForwarding";
 import { analyzeClass } from "./analysis";
 
-connection.onInitialize(() => {
+connection.onInitialize((params) => {
+	analyzeWorkspaceFolders(params.workspaceFolders ?? []);
 	return {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Full,
@@ -120,7 +126,6 @@ connection.onDidChangeConfiguration(async () => {
 
 documents.onDidClose((e) => {
 	parsedDocuments.delete(e.document.uri);
-	analyzedDocuments.delete(e.document.uri);
 	tokenBuilders.delete(e.document.uri);
 	serverSpecs.delete(e.document.uri);
 	languageServerSettings.delete(e.document.uri);
@@ -242,3 +247,25 @@ connection.languages.diagnostics.on(onDiagnostics);
 documents.listen(connection);
 
 connection.listen();
+
+import * as fs from "fs";
+import * as path from "path";
+
+async function analyzeWorkspaceFolders(folders: WorkspaceFolder[]) {
+	for (const folder of folders) {
+		const folderURI = URI.parse(folder.uri);
+		if (folderURI.scheme !== "file") {
+			continue;
+		}
+		for (const file of fs.readdirSync(folderURI.fsPath, { recursive: true, withFileTypes: true })) {
+			if (!(file.isFile() && file.name.endsWith(".cls"))) {
+				continue;
+			}
+			const filePath = path.join(file.parentPath, file.name);
+			const fileURI = URI.file(filePath).toString();
+			const fileString = fs.readFileSync(filePath, "utf-8");
+			analyzedDocuments.set(fileURI, undefined);
+			analyzedDocuments.set(fileURI, await analyzeClass(fileString));
+		}
+	}
+}
