@@ -36,7 +36,13 @@ import {
 	compressedline,
 	LanguageServerConfiguration,
 } from "../utils/types";
-import { documents, corePropertyParams, mppContinue } from "../utils/variables";
+import {
+	documents,
+	corePropertyParams,
+	mppContinue,
+	analyzedDocuments,
+	getAnalyzedClassMembers,
+} from "../utils/variables";
 import * as ld from "../utils/languageDefinitions";
 
 import structuredSystemVariables from "../documentation/structuredSystemVariables.json";
@@ -628,13 +634,13 @@ async function completionFullClassName(
 	// Add locally available classes
 	for (const [uri, cls] of analyzedDocuments) {
 		if (cls === undefined) {
-			continue
+			continue;
 		}
 		result.push({
 			label: cls.name.text,
 			kind: CompletionItemKind.Class,
-			data: ["class", (cls.name.text), uri]
-		})
+			data: ["class", cls.name.text, uri],
+		});
 	}
 	return result;
 }
@@ -1293,16 +1299,15 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 			// Add locally available classes
 			for (const [uri, cls] of analyzedDocuments) {
 				if (cls === undefined || !cls.name.text.startsWith(filter)) {
-					continue
+					continue;
 				}
 				result.push({
 					label: cls.name.text.slice(filter.length),
 					kind: CompletionItemKind.Class,
-					data: ["class", (cls.name.text.slice(filter.length)), uri]
-				})
+					data: ["class", cls.name.text.slice(filter.length), uri],
+				});
 			}
-		}
-		else if (globalOrRoutineMatch && triggerlang == ld.cos_langindex) {
+		} else if (globalOrRoutineMatch && triggerlang == ld.cos_langindex) {
 			// This might be a routine or global
 
 			result = await globalsOrRoutines(
@@ -1338,12 +1343,12 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 							data: "member",
 							documentation: {
 								kind: MarkupKind.Markdown,
-								value: documaticHtmlToMarkdown(mem.doc)
+								value: documaticHtmlToMarkdown(mem.doc),
 							},
 							sortText: name,
 							insertText: name,
-							detail: mem.kind.value.t
-						})
+							detail: mem.kind.value.t,
+						});
 					}
 				}
 				// Query the server to get the names and descriptions of all parameters
@@ -1404,25 +1409,25 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 						data: "member",
 						documentation: {
 							kind: MarkupKind.Markdown,
-							value: documaticHtmlToMarkdown(mem.doc)
+							value: documaticHtmlToMarkdown(mem.doc),
 						},
 						sortText: name,
 						insertText: name,
-					}
+					};
 					if (mem.kind.tag === "classMethod" || mem.kind.tag === "method" || mem.kind.tag === "clientMethod") {
 						item.kind = CompletionItemKind.Method;
 						if (mem.kind.value.args.length == 0) {
-							item.insertText += "()"
+							item.insertText += "()";
 						} else {
 							item.textEdit = TextEdit.insert(params.position, name.replace(/\$/g, "//$") + "($0)");
 							item.insertTextFormat = InsertTextFormat.Snippet;
 							item.command = {
 								title: "Show SignatureHelp",
-								command: "editor.action.triggerParameterHints"
-							};	
+								command: "editor.action.triggerParameterHints",
+							};
 						}
 					} else if (mem.kind.tag === "parameter") {
-						item.kind = CompletionItemKind.Constant
+						item.kind = CompletionItemKind.Constant;
 						item.insertText = "#" + name;
 					}
 					result.push(item);

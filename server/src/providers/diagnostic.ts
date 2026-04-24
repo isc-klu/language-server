@@ -19,11 +19,11 @@ import {
 	normalizeClassname,
 	quoteUDLIdentifier,
 	isClassMember,
-	getAnalyzedDocument
-} from '../utils/functions';
-import { zutilFunctions, lexerLanguages, documents } from '../utils/variables';
-import { ServerSpec, StudioOpenDialogFile, QueryData } from '../utils/types';
-import * as ld from '../utils/languageDefinitions';
+	getAnalyzedDocument,
+} from "../utils/functions";
+import { zutilFunctions, lexerLanguages, documents } from "../utils/variables";
+import { ServerSpec, StudioOpenDialogFile, QueryData } from "../utils/types";
+import * as ld from "../utils/languageDefinitions";
 import parameterTypes from "../documentation/parameterTypes.json";
 import sqlReservedWords from "../documentation/sqlReservedWords.json";
 

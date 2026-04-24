@@ -1,7 +1,7 @@
-import { Memory, WasmContext } from '@vscode/wasm-component-model';
-import * as fs from 'fs';
-import * as path from 'path';
-import { Analyst, myWorld } from './bind';
+import { Memory, WasmContext } from "@vscode/wasm-component-model";
+import * as fs from "fs";
+import * as path from "path";
+import { Analyst, myWorld } from "./bind";
 
 const filename = path.resolve(__dirname, "../lib/analyst/iris_class.wasm");
 
@@ -18,12 +18,9 @@ async function getAnalyzeClass(): Promise<Analyst.analyzeClass> {
 	wasmContext.initialize(new Memory.Default(instance.exports));
 
 	// Bind the TypeScript Api
-	const api = myWorld._.exports.bind(
-		instance.exports as myWorld._.Exports,
-		wasmContext
-	);
+	const api = myWorld._.exports.bind(instance.exports as myWorld._.Exports, wasmContext);
 
-	return api.analyst.analyzeClass
+	return api.analyst.analyzeClass;
 }
 
 export type Arg = Analyst.Arg;
@@ -39,7 +36,7 @@ export async function analyzeClass(src: string): Promise<ClassInfo | undefined> 
 	try {
 		return (await analyzeClassPromise)(src);
 	} catch (err) {
-		console.log(err)
+		console.log(err);
 		return undefined;
 	}
 }

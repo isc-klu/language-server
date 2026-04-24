@@ -1,8 +1,34 @@
-import { Position, TextDocumentPositionParams, Range, MarkupKind, Hover } from 'vscode-languageserver/node';
-import { getServerSpec, getLanguageServerSettings, findFullRange, normalizeClassname, makeRESTRequest, documaticHtmlToMarkdown, getMacroContext, isMacroDefinedAbove, haltOrHang, quoteUDLIdentifier, getClassMemberContext, beautifyFormalSpec, determineClassNameParameterClass, storageKeywordsKeyForToken, getParsedDocument, currentClass, determineVariableClass, macroDefToDoc, urlMapAttribute } from '../utils/functions';
-import { ServerSpec, QueryData, CommandDoc, KeywordDoc } from '../utils/types';
-import { documents, corePropertyParams, mppContinue, getAnalyzedClass, getAnalyzedClassMember } from '../utils/variables';
-import * as ld from '../utils/languageDefinitions';
+import { Position, TextDocumentPositionParams, Range, MarkupKind, Hover } from "vscode-languageserver/node";
+import {
+	getServerSpec,
+	getLanguageServerSettings,
+	findFullRange,
+	normalizeClassname,
+	makeRESTRequest,
+	documaticHtmlToMarkdown,
+	getMacroContext,
+	isMacroDefinedAbove,
+	haltOrHang,
+	quoteUDLIdentifier,
+	getClassMemberContext,
+	beautifyFormalSpec,
+	determineClassNameParameterClass,
+	storageKeywordsKeyForToken,
+	getParsedDocument,
+	currentClass,
+	determineVariableClass,
+	macroDefToDoc,
+	urlMapAttribute,
+} from "../utils/functions";
+import { ServerSpec, QueryData, CommandDoc, KeywordDoc } from "../utils/types";
+import {
+	documents,
+	corePropertyParams,
+	mppContinue,
+	getAnalyzedClass,
+	getAnalyzedClassMember,
+} from "../utils/variables";
+import * as ld from "../utils/languageDefinitions";
 
 import commands from "../documentation/commands.json";
 import structuredSystemVariables from "../documentation/structuredSystemVariables.json";
@@ -23,7 +49,7 @@ import queryKeywords from "../documentation/keywords/Query.json";
 import storageKeywords from "../documentation/keywords/Storage.json";
 import triggerKeywords from "../documentation/keywords/Trigger.json";
 import xdataKeywords from "../documentation/keywords/XData.json";
-import { Arg, MemberInfo } from '../analysis';
+import { Arg, MemberInfo } from "../analysis";
 
 function documaticLink(server: ServerSpec, cls: string): string {
 	return `[${cls}](${server.scheme}://${server.host}:${server.port}${server.pathPrefix}/csp/documatic/%25CSP.Documatic.cls?LIBRARY=${encodeURIComponent(
@@ -104,12 +130,9 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 					return {
 						contents: {
 							kind: MarkupKind.Markdown,
-							value: markupValue(
-								`${localInfoPrefix}[${normalizedname}](${uri})`,
-								documaticHtmlToMarkdown(info.doc)
-							)
+							value: markupValue(`${localInfoPrefix}[${normalizedname}](${uri})`, documaticHtmlToMarkdown(info.doc)),
 						},
-						range: wordrange
+						range: wordrange,
 					};
 				}
 
@@ -664,9 +687,12 @@ export async function onHover(params: TextDocumentPositionParams): Promise<Hover
 					return {
 						contents: {
 							kind: MarkupKind.Markdown,
-							value: markupValue(hoverHeadefFromMemberInfo(membercontext.baseclass, memberInfo[2]), hoverBodyFromMemberInfo(memberInfo[2]))
+							value: markupValue(
+								hoverHeadefFromMemberInfo(membercontext.baseclass, memberInfo[2]),
+								hoverBodyFromMemberInfo(memberInfo[2]),
+							),
 						},
-						range: memberrange
+						range: memberrange,
 					};
 				}
 
@@ -1439,7 +1465,7 @@ function hoverHeadefFromMemberInfo(baseclass: string, memberInfo: MemberInfo): s
 }
 
 function hoverBodyFromMemberInfo(memberInfo: MemberInfo): string {
-	let content = ""
+	let content = "";
 	content += memberInfo.doc;
 	return documaticHtmlToMarkdown(content);
 }

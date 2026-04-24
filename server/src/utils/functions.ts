@@ -1,11 +1,30 @@
-import { MarkupContent, MarkupKind, Position, Range } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { URI } from 'vscode-uri';
-import { parse } from 'node-html-parser';
+import { MarkupContent, MarkupKind, Position, Range } from "vscode-languageserver";
+import { TextDocument } from "vscode-languageserver-textdocument";
+import { URI } from "vscode-uri";
+import { parse } from "node-html-parser";
 
-import { ServerSpec, StudioOpenDialogFile, QueryData, compressedline, CommandDoc, LanguageServerConfiguration, MacroContext, DimResult, PossibleClasses, ClassMemberContext } from './types';
-import { parsedDocuments, connection, serverSpecs, languageServerSettings, documents, classMemberTypes, analyzedDocuments } from './variables';
-import * as ld from './languageDefinitions';
+import {
+	ServerSpec,
+	StudioOpenDialogFile,
+	QueryData,
+	compressedline,
+	CommandDoc,
+	LanguageServerConfiguration,
+	MacroContext,
+	DimResult,
+	PossibleClasses,
+	ClassMemberContext,
+} from "./types";
+import {
+	parsedDocuments,
+	connection,
+	serverSpecs,
+	languageServerSettings,
+	documents,
+	classMemberTypes,
+	analyzedDocuments,
+} from "./variables";
+import * as ld from "./languageDefinitions";
 
 import commands from "../documentation/commands.json";
 import structuredSystemVariables from "../documentation/structuredSystemVariables.json";
@@ -14,7 +33,7 @@ import systemVariables from "../documentation/systemVariables.json";
 
 // Initialize turndown and tune it for Documatic HTML
 import { default as TurndownService } from "turndown";
-import { ClassInfo } from '../analysis';
+import { ClassInfo } from "../analysis";
 const turndown = new TurndownService({
 	codeBlockStyle: "fenced",
 	blankReplacement: (content, node: HTMLElement) => (node.nodeName == "SPAN" ? node.outerHTML : ""),
@@ -3014,7 +3033,7 @@ export async function getParsedDocument(uri: string): Promise<compressedline[] |
 
 /**
  * Wait for the updated analysis for `uri` to be stored, then return them.
- * 
+ *
  * @param uri The uri of the document to get semantic tokens for.
  * @returns The semantic tokens, or `undefined` if `uri` is not a key of `analyzedDocuments` or retrieval took too long.
  */
@@ -3025,13 +3044,12 @@ export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | unde
 	const start = Date.now();
 	function wait(resolve: (value: ClassInfo | undefined) => void) {
 		const result = analyzedDocuments.get(uri);
-		if (result != undefined || ((Date.now() - start) >= 5000)) {
+		if (result != undefined || Date.now() - start >= 5000) {
 			resolve(result);
-		}
-		else {
+		} else {
 			setTimeout(wait, 25, resolve);
 		}
-	};
+	}
 	return new Promise(wait);
 }
 

@@ -1,9 +1,33 @@
-import { Position, TextDocumentPositionParams, Range, LocationLink, uinteger } from 'vscode-languageserver/node';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { getServerSpec, findFullRange, normalizeClassname, makeRESTRequest, createDefinitionUri, getMacroContext, isMacroDefinedAbove, quoteUDLIdentifier, getClassMemberContext, determineClassNameParameterClass, getParsedDocument, currentClass, getTextForUri, isClassMember, memberRegex, urlMapAttribute } from '../utils/functions';
-import { ServerSpec, QueryData, compressedline } from '../utils/types';
-import { documents, corePropertyParams, classMemberTypes, mppContinue, getAnalyzedClass, getAnalyzedClassMember } from '../utils/variables';
-import * as ld from '../utils/languageDefinitions';
+import { Position, TextDocumentPositionParams, Range, LocationLink, uinteger } from "vscode-languageserver/node";
+import { TextDocument } from "vscode-languageserver-textdocument";
+import {
+	getServerSpec,
+	findFullRange,
+	normalizeClassname,
+	makeRESTRequest,
+	createDefinitionUri,
+	getMacroContext,
+	isMacroDefinedAbove,
+	quoteUDLIdentifier,
+	getClassMemberContext,
+	determineClassNameParameterClass,
+	getParsedDocument,
+	currentClass,
+	getTextForUri,
+	isClassMember,
+	memberRegex,
+	urlMapAttribute,
+} from "../utils/functions";
+import { ServerSpec, QueryData, compressedline } from "../utils/types";
+import {
+	documents,
+	corePropertyParams,
+	classMemberTypes,
+	mppContinue,
+	getAnalyzedClass,
+	getAnalyzedClassMember,
+} from "../utils/variables";
+import * as ld from "../utils/languageDefinitions";
 
 /**
  * The maximum number of lines to include in the `targetRange` property
@@ -16,7 +40,7 @@ function lookupClassMember(clsName: string, memName: string, originSelectionRang
 	if (!uri_cls_mem) {
 		return null;
 	}
-	const [targetUri, _clsInfo, memInfo] = uri_cls_mem
+	const [targetUri, _clsInfo, memInfo] = uri_cls_mem;
 	const targetRange = Range.create(
 		Number(memInfo.before.ln) - 1,
 		Number(memInfo.before.cn) - 1,
@@ -29,12 +53,14 @@ function lookupClassMember(clsName: string, memName: string, originSelectionRang
 		Number(memInfo.name.after.ln) - 1,
 		Number(memInfo.name.after.cn) - 1,
 	); // the member name
-	return [{
-		targetUri,
-		targetRange,
-		originSelectionRange,
-		targetSelectionRange,
-	}];
+	return [
+		{
+			targetUri,
+			targetRange,
+			originSelectionRange,
+			targetSelectionRange,
+		},
+	];
 }
 
 /** Return a `LocationLink` for class member `memberName` in class `cls` */
@@ -48,8 +74,8 @@ async function classMemberLocationLink(
 ): Promise<LocationLink[] | undefined> {
 	const localResult = lookupClassMember(cls, memberName, memberRange);
 	if (localResult) {
-        return localResult;
-    }
+		return localResult;
+	}
 
 	const targetrange = Range.create(0, 0, 0, 0);
 	let targetselrange = Range.create(0, 0, 0, 0);
@@ -116,10 +142,15 @@ async function classMemberLocationLink(
 }
 
 /** Return a `LocationLink` for class `cls` */
-async function classLocationLink(uri: string, cls: string, range: Range, server: ServerSpec): Promise<LocationLink[] | undefined> {
+async function classLocationLink(
+	uri: string,
+	cls: string,
+	range: Range,
+	server: ServerSpec,
+): Promise<LocationLink[] | undefined> {
 	const uri_cls = getAnalyzedClass(cls);
 	if (uri_cls) {
-		const [targetUri, clsInfo] = uri_cls
+		const [targetUri, clsInfo] = uri_cls;
 		const targetRange = Range.create(0, 0, uinteger.MAX_VALUE, uinteger.MAX_VALUE); // the whole file
 		const targetSelectionRange = Range.create(
 			Number(clsInfo.name.before.ln) - 1,
@@ -127,12 +158,14 @@ async function classLocationLink(uri: string, cls: string, range: Range, server:
 			Number(clsInfo.name.after.ln) - 1,
 			Number(clsInfo.name.after.cn) - 1,
 		); // the class name
-		return [{
-			targetUri,
-			targetRange,
-			originSelectionRange: range,
-			targetSelectionRange,
-		}]
+		return [
+			{
+				targetUri,
+				targetRange,
+				originSelectionRange: range,
+				targetSelectionRange,
+			},
+		];
 	}
 	// Get the uri of the target class
 	const newuri = await createDefinitionUri(uri, cls, ".cls");

@@ -12,27 +12,35 @@ import {
 	listParameterTypes,
 	onCodeAction,
 	onCodeActionResolve,
-	validateOverrideCursor
-} from './providers/refactoring';
-import { onDocumentLinkResolve, onDocumentLinks } from './providers/documentLink';
-import { onDeclaration } from './providers/declaration';
-import { onTypeDefinition } from './providers/typeDefinition';
-import { onPrepareRename, onRenameRequest } from './providers/rename';
-import { onFoldingRanges } from './providers/foldingRange';
-import { onDocumentSymbol } from './providers/documentSymbol';
-import { onDefinition } from './providers/definition';
-import { onHover } from './providers/hover';
-import { onCompletion, onCompletionResolve, schemaCaches } from './providers/completion';
-import { onSignatureHelp } from './providers/signatureHelp';
-import { onDocumentFormatting, onDocumentRangeFormatting } from './providers/formatting';
-import { onDiagnostics } from './providers/diagnostic';
-import { onSemanticTokens, onSemanticTokensDelta } from './providers/semanticTokens';
+	validateOverrideCursor,
+} from "./providers/refactoring";
+import { onDocumentLinkResolve, onDocumentLinks } from "./providers/documentLink";
+import { onDeclaration } from "./providers/declaration";
+import { onTypeDefinition } from "./providers/typeDefinition";
+import { onPrepareRename, onRenameRequest } from "./providers/rename";
+import { onFoldingRanges } from "./providers/foldingRange";
+import { onDocumentSymbol } from "./providers/documentSymbol";
+import { onDefinition } from "./providers/definition";
+import { onHover } from "./providers/hover";
+import { onCompletion, onCompletionResolve, schemaCaches } from "./providers/completion";
+import { onSignatureHelp } from "./providers/signatureHelp";
+import { onDocumentFormatting, onDocumentRangeFormatting } from "./providers/formatting";
+import { onDiagnostics } from "./providers/diagnostic";
+import { onSemanticTokens, onSemanticTokensDelta } from "./providers/semanticTokens";
 
-import { LanguageServerConfiguration, ServerSpec } from './utils/types';
-import { analyzedDocuments, connection, documents, languageServerSettings, parsedDocuments, serverSpecs, tokenBuilders } from './utils/variables';
-import { parseDocument, getLegend } from './parse/parse';
-import { isolateEmbeddedLanguage, languageAtPosition } from './providers/requestForwarding';
-import { analyzeClass } from './analysis';
+import { LanguageServerConfiguration, ServerSpec } from "./utils/types";
+import {
+	analyzedDocuments,
+	connection,
+	documents,
+	languageServerSettings,
+	parsedDocuments,
+	serverSpecs,
+	tokenBuilders,
+} from "./utils/variables";
+import { parseDocument, getLegend } from "./parse/parse";
+import { isolateEmbeddedLanguage, languageAtPosition } from "./providers/requestForwarding";
+import { analyzeClass } from "./analysis";
 
 connection.onInitialize(() => {
 	return {
@@ -40,13 +48,13 @@ connection.onInitialize(() => {
 			textDocumentSync: TextDocumentSyncKind.Full,
 			completionProvider: {
 				resolveProvider: true,
-				triggerCharacters: [".", "$", "(", " ", "<", '"', "#", "^"]
+				triggerCharacters: [".", "$", "(", " ", "<", '"', "#", "^"],
 			},
 			hoverProvider: true,
 			definitionProvider: true,
 			signatureHelpProvider: {
 				triggerCharacters: ["(", ","],
-				retriggerCharacters: [","]
+				retriggerCharacters: [","],
 			},
 			documentFormattingProvider: true,
 			documentRangeFormattingProvider: true,
@@ -74,14 +82,16 @@ connection.onInitialize(() => {
 			diagnosticProvider: {
 				interFileDependencies: false,
 				workspaceDiagnostics: false,
-			}
-		}
+			},
+		},
 	};
 });
 
 connection.onInitialized(() => {
 	// Register for relevant configuration changes.
-	connection.client.register(DidChangeConfigurationNotification.type, { section: ["intersystems.language-server", "intersystems.servers", "objectscript.conn"] });
+	connection.client.register(DidChangeConfigurationNotification.type, {
+		section: ["intersystems.language-server", "intersystems.servers", "objectscript.conn"],
+	});
 });
 
 connection.onExit(() => {
@@ -129,15 +139,10 @@ documents.onDidChangeContent(async (change) => {
 		parseDocument(
 			change.document.languageId,
 			path.slice(path.lastIndexOf(".") + 1).toLowerCase(),
-			change.document.getText()
-		).compressedlinearray
+			change.document.getText(),
+		).compressedlinearray,
 	);
-	analyzedDocuments.set(
-		change.document.uri,
-		await analyzeClass(
-			change.document.getText()
-		)
-	);
+	analyzedDocuments.set(change.document.uri, await analyzeClass(change.document.getText()));
 });
 
 connection.onDocumentFormatting(onDocumentFormatting);
