@@ -3031,12 +3031,6 @@ export async function getParsedDocument(uri: string): Promise<compressedline[] |
 	return new Promise(waitForTokens);
 }
 
-/**
- * Wait for the updated analysis for `uri` to be stored, then return them.
- *
- * @param uri The uri of the document to get semantic tokens for.
- * @returns The semantic tokens, or `undefined` if `uri` is not a key of `analyzedDocuments` or retrieval took too long.
- */
 export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | undefined> {
 	if (!analyzedDocuments.has(uri)) {
 		return undefined;

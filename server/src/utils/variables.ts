@@ -12,6 +12,7 @@ export const parsedDocuments: Map<string, compressedline[] | undefined> = new Ma
  * TextDocument URI's mapped to the analyzed representation of the document.
  */
 export const analyzedDocuments: Map<string, ClassInfo | undefined> = new Map();
+
 export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 	for (const [uri, cls] of getAnalyzedClasses()) {
 		if (cls.name.text === name) {
@@ -20,19 +21,22 @@ export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 	}
 	return null;
 }
+
 export function* getAnalyzedClasses(): Generator<[string, ClassInfo]> {
 	for (const [uri, info] of analyzedDocuments) {
 		yield [uri, info];
 	}
 }
+
 export function getAnalyzedClassMember(clsName: string, memName: string): [string, ClassInfo, MemberInfo] | null {
 	for (const [uri, cls, mem] of getAnalyzedClassMembers(clsName)) {
 		if (mem.name.text === memName) {
 			return [uri, cls, mem];
 		}
 	}
-	return getAnalyzedClassMembers(clsName).next().value ?? null;
+	return null;
 }
+
 export function* getAnalyzedClassMembers(
 	clsName: string,
 	includeExtends: boolean = true,
@@ -45,11 +49,10 @@ export function* getAnalyzedClassMembers(
 	for (const mem of cls.members) {
 		yield [uri, cls, mem];
 	}
-	if (!includeExtends) {
-		return;
-	}
-	for (const sup of cls.extends) {
-		yield* getAnalyzedClassMembers(sup);
+	if (includeExtends) {
+		for (const sup of cls.extends) {
+			yield* getAnalyzedClassMembers(sup);
+		}
 	}
 }
 
