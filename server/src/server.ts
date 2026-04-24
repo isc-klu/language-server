@@ -1,8 +1,8 @@
-import { DidChangeConfigurationNotification, TextDocumentSyncKind, CodeActionKind } from 'vscode-languageserver/node';
-import { URI } from 'vscode-uri';
+import { DidChangeConfigurationNotification, TextDocumentSyncKind, CodeActionKind } from "vscode-languageserver/node";
+import { URI } from "vscode-uri";
 
-import { onPrepare, onSubtypes, onSupertypes } from './providers/typeHierarchy';
-import { evaluatableExpression } from './providers/evaluatableExpression';
+import { onPrepare, onSubtypes, onSupertypes } from "./providers/typeHierarchy";
+import { evaluatableExpression } from "./providers/evaluatableExpression";
 import {
 	addImportPackage,
 	addMethod,
@@ -53,25 +53,22 @@ connection.onInitialize(() => {
 			semanticTokensProvider: {
 				legend: getLegend(),
 				full: {
-					delta: true
-				}
+					delta: true,
+				},
 			},
 			documentSymbolProvider: true,
 			foldingRangeProvider: true,
 			renameProvider: {
-				prepareProvider: true
+				prepareProvider: true,
 			},
 			typeDefinitionProvider: true,
 			declarationProvider: true,
 			codeActionProvider: {
-				codeActionKinds: [
-					CodeActionKind.Refactor,
-					CodeActionKind.QuickFix
-				],
-				resolveProvider: true
+				codeActionKinds: [CodeActionKind.Refactor, CodeActionKind.QuickFix],
+				resolveProvider: true,
 			},
 			documentLinkProvider: {
-				resolveProvider: true
+				resolveProvider: true,
 			},
 			typeHierarchyProvider: true,
 			diagnosticProvider: {
@@ -101,7 +98,9 @@ connection.onDidChangeConfiguration(async () => {
 	// This is done here because it's more efficient to pack everything into one request to the client
 	const uris: string[] = documents.keys();
 	const configs: LanguageServerConfiguration[] = await connection.workspace.getConfiguration(
-		uris.map((uri) => { return { scopeUri: uri, section: "intersystems.language-server" }; })
+		uris.map((uri) => {
+			return { scopeUri: uri, section: "intersystems.language-server" };
+		}),
 	);
 	configs.forEach((config, index) => languageServerSettings.set(uris[index], config));
 
@@ -109,7 +108,7 @@ connection.onDidChangeConfiguration(async () => {
 	connection.languages.diagnostics.refresh();
 });
 
-documents.onDidClose(e => {
+documents.onDidClose((e) => {
 	parsedDocuments.delete(e.document.uri);
 	analyzedDocuments.delete(e.document.uri);
 	tokenBuilders.delete(e.document.uri);
@@ -120,7 +119,7 @@ documents.onDidClose(e => {
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(async change => {
+documents.onDidChangeContent(async (change) => {
 	// Clear the parsedDocuments value so we know to wait for an update elsewhere
 	parsedDocuments.set(change.document.uri, undefined);
 	analyzedDocuments.set(change.document.uri, undefined);
@@ -159,29 +158,27 @@ connection.languages.semanticTokens.on(onSemanticTokens);
 
 connection.languages.semanticTokens.onDelta(onSemanticTokensDelta);
 
-connection.onNotification("intersystems/server/passwordChange",
-	(serverName: string) => {
-		const invalid: string[] = [];
-		for (const [uri, server] of serverSpecs.entries()) {
-			if (server.serverName == serverName) {
-				invalid.push(uri);
-			}
-		}
-		for (const uri of invalid) {
-			serverSpecs.delete(uri);
-		}
-		let toRemove: ServerSpec | undefined = undefined;
-		for (const server of schemaCaches.keys()) {
-			if (server.serverName == serverName) {
-				toRemove = server;
-				break;
-			}
-		}
-		if (toRemove !== undefined) {
-			schemaCaches.delete(toRemove);
+connection.onNotification("intersystems/server/passwordChange", (serverName: string) => {
+	const invalid: string[] = [];
+	for (const [uri, server] of serverSpecs.entries()) {
+		if (server.serverName == serverName) {
+			invalid.push(uri);
 		}
 	}
-);
+	for (const uri of invalid) {
+		serverSpecs.delete(uri);
+	}
+	let toRemove: ServerSpec | undefined = undefined;
+	for (const server of schemaCaches.keys()) {
+		if (server.serverName == serverName) {
+			toRemove = server;
+			break;
+		}
+	}
+	if (toRemove !== undefined) {
+		schemaCaches.delete(toRemove);
+	}
+});
 
 connection.onNotification("intersystems/server/connectionChange", () => {
 	// Clear all cached server connection info

@@ -77,24 +77,24 @@ export const serverSpecs: Map<string, ServerSpec> = new Map();
 export const corePropertyParams = [
 	{
 		name: "CALCSELECTIVITY",
-		desc: `Controls whether the Tune Table facility calculates the *selectivity* for a property. Usually it is best to leave this parameter as the default (1).`
+		desc: `Controls whether the Tune Table facility calculates the *selectivity* for a property. Usually it is best to leave this parameter as the default (1).`,
 	},
 	{
 		name: "CAPTION",
-		desc: `Caption to use for this property in client applications.`
+		desc: `Caption to use for this property in client applications.`,
 	},
 	{
 		name: "EXTERNALSQLNAME",
-		desc: `Used in linked tables, this parameter specifies the name of the field in the external table to which this property is linked.`
+		desc: `Used in linked tables, this parameter specifies the name of the field in the external table to which this property is linked.`,
 	},
 	{
 		name: "EXTERNALSQLTYPE",
-		desc: `Used in linked tables, this parameter specifies the SQL type of the field in the external table to which this property is linked.`
+		desc: `Used in linked tables, this parameter specifies the SQL type of the field in the external table to which this property is linked.`,
 	},
 	{
 		name: "JAVATYPE",
-		desc: `The Java data type to which this property is projected.`
-	}
+		desc: `The Java data type to which this property is projected.`,
+	},
 ];
 
 /**
@@ -105,7 +105,7 @@ export const languageServerSettings: Map<string, LanguageServerConfiguration> = 
 /**
  * Notable `$ZUTIL` functions.
  */
-export const zutilFunctions: { deprecated: string[]; replace: { [func: string]: string }; noReplace: string[]; } = {
+export const zutilFunctions: { deprecated: string[]; replace: { [func: string]: string }; noReplace: string[] } = {
 	/** Functions that are deprecated. */
 	deprecated: [
 		"67,1,", "68,6,", "68,27,", "68,39,", "68,55,", "69,6,", "69,13,", "69,14,", "69,19,", "69,20,", "69,27,",
@@ -166,16 +166,16 @@ export const zutilFunctions: { deprecated: string[]; replace: { [func: string]: 
 };
 
 /** Languages supported by `isclexer.node` */
-export const lexerLanguages: { moniker: string; index: number; }[] = [
-	{ moniker: 'CLS', index: 3 },
-	{ moniker: 'COS', index: 1 },
-	{ moniker: 'XML', index: 9 },
-	{ moniker: 'CSS', index: 15 },
-	{ moniker: 'HTML', index: 5 },
-	{ moniker: 'JAVA', index: 13 },
-	{ moniker: 'JAVASCRIPT', index: 11 },
-	{ moniker: 'SQL', index: 2 },
-	{ moniker: 'PYTHON', index: 7 }
+export const lexerLanguages: { moniker: string; index: number }[] = [
+	{ moniker: "CLS", index: 3 },
+	{ moniker: "COS", index: 1 },
+	{ moniker: "XML", index: 9 },
+	{ moniker: "CSS", index: 15 },
+	{ moniker: "HTML", index: 5 },
+	{ moniker: "JAVA", index: 13 },
+	{ moniker: "JAVASCRIPT", index: 11 },
+	{ moniker: "SQL", index: 2 },
+	{ moniker: "PYTHON", index: 7 },
 ];
 
 /** All class member types */
