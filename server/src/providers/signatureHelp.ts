@@ -1,8 +1,9 @@
 import { Position, SignatureHelp, SignatureHelpParams, SignatureHelpTriggerKind, SignatureInformation, Range, MarkupKind, ParameterInformation } from 'vscode-languageserver/node';
 import { getServerSpec, getLanguageServerSettings, makeRESTRequest, getMacroContext, findFullRange, getClassMemberContext, beautifyFormalSpec, documaticHtmlToMarkdown, findOpenParen, getParsedDocument, quoteUDLIdentifier, determineActiveParam } from '../utils/functions';
 import { ServerSpec, SignatureHelpDocCache, SignatureHelpMacroContext } from '../utils/types';
-import { documents } from '../utils/variables';
+import { documents, getAnalyzedClassMember } from '../utils/variables';
 import * as ld from '../utils/languageDefinitions';
+import { prettifyArg } from './hover';
 
 /**
  * Cache of the macro context info required to do a macro expansion when the selected parameter changes.
@@ -294,6 +295,16 @@ export async function onSignatureHelp(params: SignatureHelpParams): Promise<Sign
 			}
 
 			// Get the method signature
+
+			// Get the method signature locally
+			let methodSignatureHelp = getMethodSignatureHelpLocally(membercontext.baseclass, member, settings.signaturehelp.documentation);
+			if (methodSignatureHelp) {
+				signatureHelpStartPosition = params.position
+				methodSignatureHelp.activeParameter = 0;
+				return methodSignatureHelp;
+			}
+
+			// Get the method signature from the server
 			const querydata = member == "%New" ? {
 				// Get the information for both %New and %OnNew
 				query: "SELECT FormalSpec, ReturnType, Description, Stub, Origin FROM %Dictionary.CompiledMethod WHERE Parent = ? AND (Name = ? OR Name = ?)",
@@ -513,6 +524,16 @@ export async function onSignatureHelp(params: SignatureHelpParams): Promise<Sign
 				}
 
 				// Get the method signature
+
+				// Get the method signature locally
+				const methodSignatureHelp = getMethodSignatureHelpLocally(membercontext.baseclass, member, settings.signaturehelp.documentation);
+				if (methodSignatureHelp) {
+					signatureHelpStartPosition = Position.create(sigstartln, parsed[sigstartln][sigstarttkn].p + 1);
+					methodSignatureHelp.activeParameter = determineActiveParam(doc.getText(Range.create(Position.create(sigstartln, parsed[sigstartln][sigstarttkn].p + 1), params.position)))
+					return methodSignatureHelp;
+				}
+
+				// Get the method signature from the server
 				const querydata = member == "%New" ? {
 					// Get the information for both %New and %OnNew
 					query: "SELECT FormalSpec, ReturnType, Description, Stub, Origin FROM %Dictionary.CompiledMethod WHERE Parent = ? AND (Name = ? OR Name = ?)",
@@ -622,4 +643,43 @@ export async function onSignatureHelp(params: SignatureHelpParams): Promise<Sign
 		}
 	}
 	return null;
+}
+
+function getMethodSignatureHelpLocally(clsName: string, memName: string, showingDoc: boolean): SignatureHelp | null {
+	const uri_cls_mem = getAnalyzedClassMember(clsName, memName) ?? (
+		memName != "%New"
+			? null
+			: getAnalyzedClassMember(clsName, "%OnNew")
+	);
+	if (!uri_cls_mem) {
+		return null
+	}
+	const [_uri, _cls, mem] = uri_cls_mem;
+	if (mem.kind.tag === "method" || mem.kind.tag === "classMethod" || mem.kind.tag === "clientMethod") {
+		const method = mem.kind.value;
+		const out = ["%Open", "%OpenId"].includes(memName)
+			? clsName
+			: method.out;
+		const sig: SignatureInformation = {
+			label: "(" + method.args.map(prettifyArg).join(", ") + ")" + (out ? " As " + out : ""),
+			parameters:
+				method.args.map((arg): ParameterInformation => ({
+					label: arg.name.text
+				}))
+		}
+		if (showingDoc) {
+			signatureHelpDocumentationCache = {
+				type: "method",
+				doc: {
+					kind: MarkupKind.Markdown,
+					value: documaticHtmlToMarkdown(mem.doc)
+				}
+			};
+			sig.documentation = signatureHelpDocumentationCache.doc;
+		}
+		return {
+			signatures: [sig],
+			activeSignature: 0,
+		};
+	}
 }

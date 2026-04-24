@@ -23,7 +23,7 @@ import queryKeywords from "../documentation/keywords/Query.json";
 import storageKeywords from "../documentation/keywords/Storage.json";
 import triggerKeywords from "../documentation/keywords/Trigger.json";
 import xdataKeywords from "../documentation/keywords/XData.json";
-import { MemberInfo } from '../analysis';
+import { Arg, MemberInfo } from '../analysis';
 
 function documaticLink(server: ServerSpec, cls: string): string {
 	return `[${cls}](${server.scheme}://${server.host}:${server.port}${server.pathPrefix}/csp/documatic/%25CSP.Documatic.cls?LIBRARY=${encodeURIComponent(server.namespace.toUpperCase())
@@ -1236,20 +1236,7 @@ function hoverHeadefFromMemberInfo(baseclass: string, memberInfo: MemberInfo): s
 	const { kind } = memberInfo;
 	if (kind.tag === "classMethod" || kind.tag === "clientMethod" || kind.tag === "method") {
 		const { args, out } = kind.value;
-		const argList = args.map((arg) => {
-			let string = "";
-			if (arg.byRef) {
-				string += "&"
-			}
-			string += arg.name.text;
-			if (arg.variadic) {
-				string += "..."
-			}
-			if (arg.t) {
-				string += ` As ${arg.t}`;
-			}
-			return string;
-		}).join(", ");
+		const argList = args.map(prettifyArg).join(", ");
 		content += `(${argList})`;
 		if (out) {
 			content += ` As ${out}`;
@@ -1276,3 +1263,17 @@ function hoverBodyFromMemberInfo(memberInfo: MemberInfo): string {
 	return documaticHtmlToMarkdown(content);
 }
 
+export const prettifyArg = (arg: Arg): string => {
+	let string = "";
+	if (arg.byRef) {
+		string += "&";
+	}
+	string += arg.name.text;
+	if (arg.variadic) {
+		string += "...";
+	}
+	if (arg.t) {
+		string += ` As ${arg.t}`;
+	}
+	return string;
+};
