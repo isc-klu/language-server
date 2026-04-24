@@ -3,3 +3,4 @@
 **/out/
 *.vsix
 /server/lib/isclexer.node
+**/tsconfig.tsbuildinfo
