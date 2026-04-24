@@ -1400,7 +1400,6 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					return null;
 				}
 
-				// Query the server to get the metadata of all appropriate class members
 				for (const [_uri, _cls, mem] of getAnalyzedClassMembers(membercontext.baseclass)) {
 					const name = quoteUDLIdentifier(mem.name.text, 1);
 					const item: CompletionItem = {
@@ -1433,6 +1432,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					result.push(item);
 				}
 
+				// Query the server to get the metadata of all appropriate class members
 				const data: QueryData = {
 					query: "",
 					parameters: [],
