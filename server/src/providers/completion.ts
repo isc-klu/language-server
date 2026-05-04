@@ -40,7 +40,6 @@ import {
 	documents,
 	corePropertyParams,
 	mppContinue,
-	analyzedDocuments,
 	getAnalyzedClassMembers,
 	getAnalyzedClasses,
 } from "../utils/variables";
@@ -600,10 +599,9 @@ async function completionFullClassName(
 	if (respdata !== undefined && respdata.data.result.content.length > 0) {
 		for (const clsobj of respdata.data.result.content) {
 			const compItem: CompletionItem = makeClassCompletionItem(imports, clsobj.Name, doc.uri, clsobj.Deprecated);
-			if (added.has(clsobj.Name)) {
-				continue;
+			if (!added.has(clsobj.Name)) {
+				result.push(compItem);
 			}
-			result.push(compItem);
 		}
 	}
 
@@ -1274,6 +1272,21 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 				}
 			}
 
+			// Add locally available classes
+			const added = new Set<string>();
+			for (const [uri, cls] of getAnalyzedClasses()) {
+				if (!cls.name.text.startsWith(filter)) {
+					continue;
+				}
+				added.add(cls.name.text);
+				result.push({
+					label: cls.name.text.slice(filter.length),
+					kind: CompletionItemKind.Class,
+					data: ["class", cls.name.text.slice(filter.length), uri],
+					tags: cls.deprecated ? [CompletionItemTag.Deprecated] : undefined,
+				});
+			}
+
 			// Get all classes that match the filter
 			const querydata = {
 				query: `SELECT dcd.Name, dcd.Deprecated FROM %Library.RoutineMgr_StudioOpenDialog(?,?,?,?,?,?,?,?) AS sod, %Dictionary.ClassDefinition AS dcd WHERE sod.Name = dcd.Name||'.cls'${!settings.completion.showDeprecated ? " AND dcd.Deprecated = 0" : ""
@@ -1285,25 +1298,15 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 				// We got data back
 
 				for (const clsobj of respdata.data.result.content) {
-					result.push({
-						label: clsobj.Name.slice(filter.length),
-						kind: CompletionItemKind.Class,
-						data: ["class", clsobj.Name, doc.uri],
-						tags: clsobj.Deprecated ? [CompletionItemTag.Deprecated] : undefined,
-					});
+					if (!added.has(clsobj.Name)) {
+						result.push({
+							label: clsobj.Name.slice(filter.length),
+							kind: CompletionItemKind.Class,
+							data: ["class", clsobj.Name, doc.uri],
+							tags: clsobj.Deprecated ? [CompletionItemTag.Deprecated] : undefined,
+						});
+					}
 				}
-			}
-
-			// Add locally available classes
-			for (const [uri, cls] of analyzedDocuments) {
-				if (cls === undefined || !cls.name.text.startsWith(filter)) {
-					continue;
-				}
-				result.push({
-					label: cls.name.text.slice(filter.length),
-					kind: CompletionItemKind.Class,
-					data: ["class", cls.name.text.slice(filter.length), uri],
-				});
 			}
 		} else if (globalOrRoutineMatch && triggerlang == ld.cos_langindex) {
 			// This might be a routine or global
@@ -1352,8 +1355,8 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 				// Query the server to get the names and descriptions of all parameters
 				const data: QueryData = {
 					query: `SELECT Name, Description, Origin, Type, Deprecated FROM %Dictionary.CompiledParameter WHERE Parent = ?${membercontext.context == "instance"
-						? " AND (parent->ClassType IS NULL OR parent->ClassType != 'datatype')"
-						: ""
+							? " AND (parent->ClassType IS NULL OR parent->ClassType != 'datatype')"
+							: ""
 						}${internalStr}${deprecatedStr}`,
 					parameters: [membercontext.baseclass],
 				};
@@ -1697,8 +1700,8 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 		// Query the server to get the names and descriptions of all class-specific parameters
 		const data: QueryData = {
 			query: `SELECT Name, Description, Origin, Type, Deprecated FROM %Dictionary.CompiledParameter WHERE Parent = ?${isProperty
-				? " OR Parent %INLIST (SELECT $LISTFROMSTRING(PropertyClass) FROM %Dictionary.CompiledClass WHERE Name = ?)"
-				: ""
+					? " OR Parent %INLIST (SELECT $LISTFROMSTRING(PropertyClass) FROM %Dictionary.CompiledClass WHERE Name = ?)"
+					: ""
 				}${!(await showInternalForServer(server)) ? " AND Internal = 0" : ""}${!settings.completion.showDeprecated ? " AND Deprecated = 0" : ""}`,
 			parameters: isProperty ? [normalizedcls, currentClass(doc, parsed)] : [normalizedcls],
 		};
