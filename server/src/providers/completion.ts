@@ -586,7 +586,12 @@ async function completionFullClassName(
 	const added = new Set<string>();
 	for (const [uri, cls] of getAnalyzedClasses()) {
 		added.add(cls.name.text);
-		result.push(makeClassCompletionItem(imports, cls.name.text, uri, cls.deprecated));
+		const item = makeClassCompletionItem(imports, cls.name.text, uri, cls.deprecated);
+		item.documentation = {
+			kind: MarkupKind.Markdown,
+			value: documaticHtmlToMarkdown(cls.doc),
+		};
+		result.push(item);
 	}
 
 	// Get all classes
@@ -1287,6 +1292,10 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					kind: CompletionItemKind.Class,
 					data: ["class", cls.name.text.slice(filter.length), uri],
 					tags: cls.deprecated ? [CompletionItemTag.Deprecated] : undefined,
+					documentation: {
+						kind: MarkupKind.Markdown,
+						value: documaticHtmlToMarkdown(cls.doc),
+					},
 				});
 			}
 
@@ -2525,6 +2534,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 }
 
 export async function onCompletionResolve(item: CompletionItem): Promise<CompletionItem> {
+	if (item.documentation) return item;
 	if (Array.isArray(item.data) && item.data[0] === "class") {
 		// Get the description for this class from the server
 		const server: ServerSpec = await getServerSpec(item.data[2]);
