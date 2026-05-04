@@ -42,6 +42,7 @@ import {
 	mppContinue,
 	analyzedDocuments,
 	getAnalyzedClassMembers,
+	getAnalyzedClasses,
 } from "../utils/variables";
 import * as ld from "../utils/languageDefinitions";
 
@@ -582,6 +583,11 @@ async function completionFullClassName(
 	// Get the list of imports for resolution
 	const imports = await getImports(doc, parsed, line, server);
 
+	// Add locally available classes
+	for (const [uri, cls] of getAnalyzedClasses()) {
+		result.push(makeClassCompletionItem(imports, cls.name.text, uri, cls.deprecated));
+	}
+
 	// Get all classes
 	const querydata = {
 		query: `SELECT dcd.Name, dcd.Deprecated FROM %Library.RoutineMgr_StudioOpenDialog(?,?,?,?,?,?,?) AS sod, %Dictionary.ClassDefinition AS dcd WHERE sod.Name = dcd.Name||'.cls'${
@@ -592,57 +598,48 @@ async function completionFullClassName(
 	const respdata = await makeRESTRequest("POST", 1, "/action/query", server, querydata);
 	if (respdata !== undefined && respdata.data.result.content.length > 0) {
 		for (const clsobj of respdata.data.result.content) {
-			let displayname: string = clsobj.Name;
-			let compItem: CompletionItem;
-			if (imports.length > 0) {
-				// Resolve import
-				let sortText: string;
-				for (const imp of imports) {
-					if (displayname.indexOf(imp) === 0 && displayname.slice(imp.length + 1).indexOf(".") === -1) {
-						displayname = displayname.slice(imp.length + 1);
-						sortText = "%%%" + displayname;
-						break;
-					}
-				}
-				if (displayname.startsWith("%Library.")) {
-					// Use short form for %Library classes
-					displayname = "%" + displayname.slice(9);
-				}
-				compItem = {
-					label: displayname,
-					kind: CompletionItemKind.Class,
-					data: ["class", clsobj.Name, doc.uri],
-					sortText,
-				};
-			} else {
-				if (displayname.startsWith("%Library.")) {
-					// Use short form for %Library classes
-					displayname = "%" + displayname.slice(9);
-				}
-				compItem = {
-					label: displayname,
-					kind: CompletionItemKind.Class,
-					data: ["class", clsobj.Name, doc.uri],
-				};
-			}
-			if (clsobj.Deprecated) {
-				compItem.tags = [CompletionItemTag.Deprecated];
-			}
+			const compItem: CompletionItem = makeClassCompletionItem(imports, clsobj.Name, doc.uri, clsobj.Deprecated);
 			result.push(compItem);
 		}
 	}
-	// Add locally available classes
-	for (const [uri, cls] of analyzedDocuments) {
-		if (cls === undefined) {
-			continue;
-		}
-		result.push({
-			label: cls.name.text,
-			kind: CompletionItemKind.Class,
-			data: ["class", cls.name.text, uri],
-		});
-	}
+
 	return result;
+}
+
+function makeClassCompletionItem(imports: string[], name: string, uri: TextDocument["uri"], deprecated: boolean) {
+	let displayName: string = name;
+	let sortText: string | null = null;
+	if (imports.length > 0) {
+		// Resolve import
+		for (const imp of imports) {
+			if (displayName.indexOf(imp) === 0 && displayName.slice(imp.length + 1).indexOf(".") === -1) {
+				displayName = displayName.slice(imp.length + 1);
+				sortText = "%%%" + displayName;
+				break;
+			}
+		}
+		if (displayName.startsWith("%Library.")) {
+			// Use short form for %Library classes
+			displayName = "%" + displayName.slice(9);
+		}
+	} else {
+		if (displayName.startsWith("%Library.")) {
+			// Use short form for %Library classes
+			displayName = "%" + displayName.slice(9);
+		}
+	}
+	const compItem: CompletionItem = {
+		label: displayName,
+		kind: CompletionItemKind.Class,
+		data: ["class", name, uri],
+	};
+	if (sortText !== null) {
+		compItem.sortText = sortText;
+	}
+	if (deprecated) {
+		compItem.tags = [CompletionItemTag.Deprecated];
+	}
+	return compItem;
 }
 
 /**

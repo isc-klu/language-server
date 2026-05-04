@@ -215,6 +215,7 @@ export namespace analyzer {
 		doc: string;
 		name: NameInfo;
 		extends: string[];
+		deprecated: boolean;
 		members: MemberInfo[];
 	};
 	export type MacroInfo = {
@@ -353,6 +354,7 @@ export namespace analyzer.$ {
 		["doc", $wcm.wstring],
 		["name", NameInfo],
 		["extends", new $wcm.ListType<string>($wcm.wstring)],
+		["deprecated", $wcm.bool],
 		["members", new $wcm.ListType<analyzer.MemberInfo>(MemberInfo)],
 	]);
 	export const MacroInfo = new $wcm.RecordType<MacroInfo>([
