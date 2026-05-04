@@ -33,7 +33,7 @@ import systemVariables from "../documentation/systemVariables.json";
 
 // Initialize turndown and tune it for Documatic HTML
 import { default as TurndownService } from "turndown";
-import { ClassInfo } from "../analysis";
+import { ClassInfo } from "../analyzer";
 const turndown = new TurndownService({
 	codeBlockStyle: "fenced",
 	blankReplacement: (content, node: HTMLElement) => (node.nodeName == "SPAN" ? node.outerHTML : ""),

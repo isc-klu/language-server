@@ -5,35 +5,30 @@
 import * as $wcm from "@vscode/wasm-component-model";
 import type { u8, i32, ptr, result } from "@vscode/wasm-component-model";
 
-export namespace Analyst {
+export namespace analyzer {
 	export type SrcLoc = {
 		ln: u8;
 		cn: u8;
 	};
-
 	export type NameInfo = {
 		before: SrcLoc;
 		text: string;
 		after: SrcLoc;
 	};
-
 	export type Arg = {
 		byRef: boolean;
 		variadic: boolean;
 		name: NameInfo;
 		t?: string | undefined;
 	};
-
 	export type MethodInfo = {
 		args: Arg[];
 		out?: string | undefined;
 	};
-
 	export type ParameterInfo = {
 		t?: string | undefined;
 		v?: string | undefined;
 	};
-
 	export namespace MemberKind {
 		export const parameter = "parameter" as const;
 		export type Parameter = { readonly tag: typeof parameter; readonly value: ParameterInfo } & _common;
@@ -209,7 +204,6 @@ export namespace Analyst {
 		| MemberKind.Method
 		| MemberKind.ClassMethod
 		| MemberKind.ClientMethod;
-
 	export type MemberInfo = {
 		doc: string;
 		before: SrcLoc;
@@ -217,23 +211,70 @@ export namespace Analyst {
 		kind: MemberKind;
 		after: SrcLoc;
 	};
-
 	export type ClassInfo = {
 		doc: string;
 		name: NameInfo;
 		extends: string[];
 		members: MemberInfo[];
 	};
+	export type MacroInfo = {
+		name: NameInfo;
+		args: string[];
+	};
+	export type SubroutineInfo = {
+		name: NameInfo;
+		args: string[];
+	};
+	export namespace RoutineInfo {
+		export const inc = "INC" as const;
+		export type INC = { readonly tag: typeof inc; readonly value: MacroInfo[] } & _common;
+		export function INC(value: MacroInfo[]): INC {
+			return new VariantImpl(inc, value) as INC;
+		}
 
-	/**
-	 * @throws $wcm.wstring.Error
-	 */
-	export type analyzeClass = (src: string) => ClassInfo;
-}
-export type Analyst = {
-	analyzeClass: Analyst.analyzeClass;
-};
-export namespace myWorld {
+		export const int = "INT" as const;
+		export type INT = { readonly tag: typeof int; readonly value: SubroutineInfo[] } & _common;
+		export function INT(value: SubroutineInfo[]): INT {
+			return new VariantImpl(int, value) as INT;
+		}
+
+		export const mac = "MAC" as const;
+		export type MAC = { readonly tag: typeof mac; readonly value: SubroutineInfo[] } & _common;
+		export function MAC(value: SubroutineInfo[]): MAC {
+			return new VariantImpl(mac, value) as MAC;
+		}
+
+		export type _tt = typeof inc | typeof int | typeof mac;
+		export type _vt = MacroInfo[] | SubroutineInfo[] | SubroutineInfo[];
+		type _common = Omit<VariantImpl, "tag" | "value">;
+		export function _ctor(t: _tt, v: _vt): RoutineInfo {
+			return new VariantImpl(t, v) as RoutineInfo;
+		}
+		class VariantImpl {
+			private readonly _tag: _tt;
+			private readonly _value: _vt;
+			constructor(t: _tt, value: _vt) {
+				this._tag = t;
+				this._value = value;
+			}
+			get tag(): _tt {
+				return this._tag;
+			}
+			get value(): _vt {
+				return this._value;
+			}
+			isINC(): this is INC {
+				return this._tag === RoutineInfo.inc;
+			}
+			isINT(): this is INT {
+				return this._tag === RoutineInfo.int;
+			}
+			isMAC(): this is MAC {
+				return this._tag === RoutineInfo.mac;
+			}
+		}
+	}
+	export type RoutineInfo = RoutineInfo.INC | RoutineInfo.INT | RoutineInfo.MAC;
 	export type Imports = {};
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
@@ -242,7 +283,14 @@ export namespace myWorld {
 		export type Promisify<T> = $wcm.$imports.Promisify<T>;
 	}
 	export type Exports = {
-		analyst: Analyst;
+		/**
+		 * @throws $wcm.wstring.Error
+		 */
+		analyzeCls: (path: string, src: string) => ClassInfo;
+		/**
+		 * @throws $wcm.wstring.Error
+		 */
+		analyzeRtn: (path: string, src: string) => RoutineInfo;
 	};
 	export namespace Exports {
 		export type Promisified = $wcm.$exports.Promisify<Exports>;
@@ -252,31 +300,31 @@ export namespace myWorld {
 	}
 }
 
-export namespace Analyst.$ {
-	export const SrcLoc = new $wcm.RecordType<Analyst.SrcLoc>([
+export namespace analyzer.$ {
+	export const SrcLoc = new $wcm.RecordType<SrcLoc>([
 		["ln", $wcm.u8],
 		["cn", $wcm.u8],
 	]);
-	export const NameInfo = new $wcm.RecordType<Analyst.NameInfo>([
+	export const NameInfo = new $wcm.RecordType<NameInfo>([
 		["before", SrcLoc],
 		["text", $wcm.wstring],
 		["after", SrcLoc],
 	]);
-	export const Arg = new $wcm.RecordType<Analyst.Arg>([
+	export const Arg = new $wcm.RecordType<Arg>([
 		["byRef", $wcm.bool],
 		["variadic", $wcm.bool],
 		["name", NameInfo],
 		["t", new $wcm.OptionType<string>($wcm.wstring)],
 	]);
-	export const MethodInfo = new $wcm.RecordType<Analyst.MethodInfo>([
-		["args", new $wcm.ListType<Analyst.Arg>(Arg)],
+	export const MethodInfo = new $wcm.RecordType<MethodInfo>([
+		["args", new $wcm.ListType<analyzer.Arg>(Arg)],
 		["out", new $wcm.OptionType<string>($wcm.wstring)],
 	]);
-	export const ParameterInfo = new $wcm.RecordType<Analyst.ParameterInfo>([
+	export const ParameterInfo = new $wcm.RecordType<ParameterInfo>([
 		["t", new $wcm.OptionType<string>($wcm.wstring)],
 		["v", new $wcm.OptionType<string>($wcm.wstring)],
 	]);
-	export const MemberKind = new $wcm.VariantType<Analyst.MemberKind, Analyst.MemberKind._tt, Analyst.MemberKind._vt>(
+	export const MemberKind = new $wcm.VariantType<MemberKind, MemberKind._tt, MemberKind._vt>(
 		[
 			["parameter", ParameterInfo],
 			["property", new $wcm.OptionType<string>($wcm.wstring)],
@@ -292,87 +340,101 @@ export namespace Analyst.$ {
 			["classMethod", MethodInfo],
 			["clientMethod", MethodInfo],
 		],
-		Analyst.MemberKind._ctor,
+		analyzer.MemberKind._ctor,
 	);
-	export const MemberInfo = new $wcm.RecordType<Analyst.MemberInfo>([
+	export const MemberInfo = new $wcm.RecordType<MemberInfo>([
 		["doc", $wcm.wstring],
 		["before", SrcLoc],
 		["name", NameInfo],
 		["kind", MemberKind],
 		["after", SrcLoc],
 	]);
-	export const ClassInfo = new $wcm.RecordType<Analyst.ClassInfo>([
+	export const ClassInfo = new $wcm.RecordType<ClassInfo>([
 		["doc", $wcm.wstring],
 		["name", NameInfo],
 		["extends", new $wcm.ListType<string>($wcm.wstring)],
-		["members", new $wcm.ListType<Analyst.MemberInfo>(MemberInfo)],
+		["members", new $wcm.ListType<analyzer.MemberInfo>(MemberInfo)],
 	]);
-	export const analyzeClass = new $wcm.FunctionType<Analyst.analyzeClass>(
-		"analyze-class",
-		[["src", $wcm.wstring]],
-		new $wcm.ResultType<Analyst.ClassInfo, string>(ClassInfo, $wcm.wstring, $wcm.wstring.Error),
+	export const MacroInfo = new $wcm.RecordType<MacroInfo>([
+		["name", NameInfo],
+		["args", new $wcm.ListType<string>($wcm.wstring)],
+	]);
+	export const SubroutineInfo = new $wcm.RecordType<SubroutineInfo>([
+		["name", NameInfo],
+		["args", new $wcm.ListType<string>($wcm.wstring)],
+	]);
+	export const RoutineInfo = new $wcm.VariantType<RoutineInfo, RoutineInfo._tt, RoutineInfo._vt>(
+		[
+			["INC", new $wcm.ListType<analyzer.MacroInfo>(MacroInfo)],
+			["INT", new $wcm.ListType<analyzer.SubroutineInfo>(SubroutineInfo)],
+			["MAC", new $wcm.ListType<analyzer.SubroutineInfo>(SubroutineInfo)],
+		],
+		analyzer.RoutineInfo._ctor,
 	);
-}
-export namespace Analyst._ {
-	export const id = "iris:udl/analyst" as const;
-	export const witName = "analyst" as const;
-	export const types: Map<string, $wcm.AnyComponentModelType> = new Map<string, $wcm.AnyComponentModelType>([
-		["SrcLoc", $.SrcLoc],
-		["NameInfo", $.NameInfo],
-		["Arg", $.Arg],
-		["MethodInfo", $.MethodInfo],
-		["ParameterInfo", $.ParameterInfo],
-		["MemberKind", $.MemberKind],
-		["MemberInfo", $.MemberInfo],
-		["ClassInfo", $.ClassInfo],
-	]);
-	export const functions: Map<string, $wcm.FunctionType> = new Map([["analyzeClass", $.analyzeClass]]);
-	export type WasmInterface = {
-		"analyze-class": (src_ptr: i32, src_len: i32, result: ptr<result<ClassInfo, string>>) => void;
-	};
-	export namespace imports {
-		export type WasmInterface = _.WasmInterface;
-	}
 	export namespace exports {
-		export type WasmInterface = _.WasmInterface;
+		export const analyzeCls = new $wcm.FunctionType<analyzer.Exports["analyzeCls"]>(
+			"analyze-cls",
+			[
+				["path", $wcm.wstring],
+				["src", $wcm.wstring],
+			],
+			new $wcm.ResultType<analyzer.ClassInfo, string>(ClassInfo, $wcm.wstring, $wcm.wstring.Error),
+		);
+		export const analyzeRtn = new $wcm.FunctionType<analyzer.Exports["analyzeRtn"]>(
+			"analyze-rtn",
+			[
+				["path", $wcm.wstring],
+				["src", $wcm.wstring],
+			],
+			new $wcm.ResultType<analyzer.RoutineInfo, string>(RoutineInfo, $wcm.wstring, $wcm.wstring.Error),
+		);
 	}
 }
-export namespace myWorld.$ {}
-export namespace myWorld._ {
-	export const id = "iris:udl/my-world" as const;
-	export const witName = "my-world" as const;
+export namespace analyzer._ {
+	export const id = "iris:objectscript-analyzer/analyzer" as const;
+	export const witName = "analyzer" as const;
 	export namespace exports {
-		export const interfaces: Map<string, $wcm.InterfaceType> = new Map<string, $wcm.InterfaceType>([
-			["Analyst", Analyst._],
+		export const functions: Map<string, $wcm.FunctionType> = new Map([
+			["analyzeCls", $.exports.analyzeCls],
+			["analyzeRtn", $.exports.analyzeRtn],
 		]);
-		export function bind(exports: Exports, context: $wcm.WasmContext): myWorld.Exports {
-			return $wcm.$exports.bind<myWorld.Exports>(_, exports, context);
+		export function bind(exports: Exports, context: $wcm.WasmContext): analyzer.Exports {
+			return $wcm.$exports.bind<analyzer.Exports>(_, exports, context);
 		}
 	}
 	export type Exports = {
-		"iris:udl/analyst#analyze-class": (
+		"analyze-cls": (
+			path_ptr: i32,
+			path_len: i32,
 			src_ptr: i32,
 			src_len: i32,
-			result: ptr<result<Analyst.ClassInfo, string>>,
+			result: ptr<result<ClassInfo, string>>,
+		) => void;
+		"analyze-rtn": (
+			path_ptr: i32,
+			path_len: i32,
+			src_ptr: i32,
+			src_len: i32,
+			result: ptr<result<RoutineInfo, string>>,
 		) => void;
 	};
 	export function bind(
-		service: myWorld.Imports,
+		service: analyzer.Imports,
 		code: $wcm.Code,
 		context?: $wcm.ComponentModelContext,
-	): Promise<myWorld.Exports>;
+	): Promise<analyzer.Exports>;
 	export function bind(
-		service: myWorld.Imports.Promisified,
+		service: analyzer.Imports.Promisified,
 		code: $wcm.Code,
 		port: $wcm.RAL.ConnectionPort,
 		context?: $wcm.ComponentModelContext,
-	): Promise<myWorld.Exports.Promisified>;
+	): Promise<analyzer.Exports.Promisified>;
 	export function bind(
-		service: myWorld.Imports | myWorld.Imports.Promisified,
+		service: analyzer.Imports | analyzer.Imports.Promisified,
 		code: $wcm.Code,
 		portOrContext?: $wcm.RAL.ConnectionPort | $wcm.ComponentModelContext,
 		context?: $wcm.ComponentModelContext | undefined,
-	): Promise<myWorld.Exports> | Promise<myWorld.Exports.Promisified> {
+	): Promise<analyzer.Exports> | Promise<analyzer.Exports.Promisified> {
 		return $wcm.$main.bind(_, service, code, portOrContext, context);
 	}
 }

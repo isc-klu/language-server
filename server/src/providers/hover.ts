@@ -49,7 +49,7 @@ import queryKeywords from "../documentation/keywords/Query.json";
 import storageKeywords from "../documentation/keywords/Storage.json";
 import triggerKeywords from "../documentation/keywords/Trigger.json";
 import xdataKeywords from "../documentation/keywords/XData.json";
-import { Arg, MemberInfo } from "../analysis";
+import { Arg, MemberInfo } from "../analyzer";
 
 function documaticLink(server: ServerSpec, cls: string): string {
 	return `[${cls}](${server.scheme}://${server.host}:${server.port}${server.pathPrefix}/csp/documatic/%25CSP.Documatic.cls?LIBRARY=${encodeURIComponent(

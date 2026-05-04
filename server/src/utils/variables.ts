@@ -1,7 +1,7 @@
 import { createConnection, SemanticTokensBuilder, TextDocuments } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { compressedline, LanguageServerConfiguration, ServerSpec } from "./types";
-import { ClassInfo, MemberInfo } from "../analysis";
+import { ClassInfo, MemberInfo } from "../analyzer";
 
 /**
  * TextDocument URI's mapped to the tokenized representation of the document.
@@ -24,7 +24,9 @@ export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 
 export function* getAnalyzedClasses(): Generator<[string, ClassInfo]> {
 	for (const [uri, info] of analyzedDocuments) {
-		yield [uri, info];
+		if (info) {
+			yield [uri, info];
+		}
 	}
 }
 
