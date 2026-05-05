@@ -212,6 +212,7 @@ export namespace analyzer {
 		doc: string;
 		before: SrcLoc;
 		name: NameInfo;
+		deprecated: boolean;
 		kind: MemberKind;
 		after: SrcLoc;
 	};
@@ -398,6 +399,7 @@ export namespace analyzer.$ {
 		["doc", $wcm.wstring],
 		["before", SrcLoc],
 		["name", NameInfo],
+		["deprecated", $wcm.bool],
 		["kind", MemberKind],
 		["after", SrcLoc],
 	]);

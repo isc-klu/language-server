@@ -1360,10 +1360,6 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 					if (mem.kind.tag === "parameter") {
 						const name = quoteUDLIdentifier(mem.name.text, 1);
 						added.add(name);
-						// // todo
-						// if (memobj.Deprecated) {
-						// 	item.tags = [CompletionItemTag.Deprecated];
-						// }
 						result.push({
 							label: "#" + name,
 							kind: CompletionItemKind.Constant,
@@ -1375,6 +1371,7 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 							sortText: name,
 							insertText: name,
 							detail: mem.kind.value.t,
+							tags: mem.deprecated ? [CompletionItemTag.Deprecated] : [],
 						});
 					}
 				}
@@ -1458,10 +1455,9 @@ export async function onCompletion(params: CompletionParams): Promise<Completion
 						item.kind = CompletionItemKind.Constant;
 						item.insertText = "#" + name;
 					}
-					// // todo
-					// if (memobj.Deprecated) {
-					// 	item.tags = [CompletionItemTag.Deprecated];
-					// }
+					if (mem.deprecated) {
+						item.tags = [CompletionItemTag.Deprecated];
+					}
 					result.push(item);
 				}
 
