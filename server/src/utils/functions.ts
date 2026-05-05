@@ -1,4 +1,4 @@
-import { MarkupContent, MarkupKind, Position, Range } from "vscode-languageserver";
+import { Diagnostic, MarkupContent, MarkupKind, Position, Range } from "vscode-languageserver";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { URI } from "vscode-uri";
 import { parse } from "node-html-parser";
@@ -3031,12 +3031,12 @@ export async function getParsedDocument(uri: string): Promise<compressedline[] |
 	return new Promise(waitForTokens);
 }
 
-export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | { error: string } | undefined> {
+export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | { error: Diagnostic[] } | undefined> {
 	if (!analyzedDocuments.has(uri)) {
 		return undefined;
 	}
 	const start = Date.now();
-	function wait(resolve: (value: ClassInfo | { error: string }) => void) {
+	function wait(resolve: (value: ClassInfo | { error: Diagnostic[] }) => void) {
 		const result = analyzedDocuments.get(uri);
 		if (result != undefined || Date.now() - start >= 5000) {
 			resolve(result);

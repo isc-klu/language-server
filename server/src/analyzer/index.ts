@@ -2,6 +2,7 @@ import { Memory, WasmContext } from "@vscode/wasm-component-model";
 import * as fs from "fs";
 import * as path from "path";
 import { analyzer } from "./bind";
+import { Diagnostic, DiagnosticSeverity, Range } from "vscode-languageserver";
 
 const filename = path.resolve(__dirname, "../lib/analyzer.wasm");
 
@@ -27,15 +28,33 @@ export type ParameterInfo = analyzer.ParameterInfo;
 export type MemberKind = analyzer.MemberKind;
 export type MemberInfo = analyzer.MemberInfo;
 export type ClassInfo = analyzer.ClassInfo;
+export type AnalysisErr = analyzer.AnalysisErr;
 
 const wasm = loadAnalyzer();
 
-export type AnalyzeResult = ClassInfo | { error: string };
+export type AnalyzeResult = ClassInfo | { error: Diagnostic[] };
 
 export async function analyzeCls(path: string, src: string): Promise<AnalyzeResult> {
 	try {
 		return (await wasm).analyzeCls(path, src);
-	} catch (error) {
-		return { error: error as string };
+	} catch (rawError) {
+		const error = rawError["cause"]["_value"] as analyzer.ParseErr;
+		const range = Range.create(
+			error.range.lft.ln - 1,
+			error.range.lft.cn - 1,
+			error.range.rht.ln - 1,
+			error.range.rht.cn - 1,
+		);
+		const message = error.message;
+		return {
+			error: [
+				{
+					severity: DiagnosticSeverity.Information,
+					range,
+					message,
+					source: "InterSystems Language Server",
+				},
+			],
+		};
 	}
 }

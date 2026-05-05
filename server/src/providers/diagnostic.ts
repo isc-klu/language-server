@@ -70,12 +70,7 @@ export async function onDiagnostics(params: DocumentDiagnosticParams): Promise<D
 	const diagnostics: Diagnostic[] = [];
 
 	if ("error" in analyzed) {
-		diagnostics.push({
-			severity: DiagnosticSeverity.Warning,
-			range: Range.create(0, 0, 0, 0),
-			message: "Could not parse document: " + analyzed.error,
-			source: "InterSystems Language Server",
-		});
+		diagnostics.push(...analyzed.error);
 	}
 
 	/** Check if syntax errors should be reported for `language`. */
@@ -1476,14 +1471,7 @@ export async function onWorkspaceDiagnostics(): Promise<WorkspaceDiagnosticRepor
 				kind: "full",
 				uri,
 				version: null,
-				items: [
-					{
-						severity: DiagnosticSeverity.Error,
-						range: Range.create(0, 0, 0, 0),
-						message: "From workspace: " + res.error,
-						source: "InterSystems Language Server",
-					},
-				],
+				items: res.error,
 			});
 		}
 	}

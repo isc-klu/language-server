@@ -1,4 +1,4 @@
-import { createConnection, SemanticTokensBuilder, TextDocuments } from "vscode-languageserver/node";
+import { createConnection, Diagnostic, SemanticTokensBuilder, TextDocuments } from "vscode-languageserver/node";
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { compressedline, LanguageServerConfiguration, ServerSpec } from "./types";
 import { ClassInfo, MemberInfo } from "../analyzer";
@@ -11,7 +11,7 @@ export const parsedDocuments: Map<string, compressedline[] | undefined> = new Ma
 /**
  * TextDocument URI's mapped to the analyzed representation of the document.
  */
-export const analyzedDocuments: Map<string, ClassInfo | { error: string }> = new Map();
+export const analyzedDocuments: Map<string, ClassInfo | { error: Diagnostic[] }> = new Map();
 
 export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 	for (const [uri, cls] of getAnalyzedClasses()) {

@@ -10,6 +10,10 @@ export namespace analyzer {
 		ln: u8;
 		cn: u8;
 	};
+	export type Range = {
+		lft: SrcLoc;
+		rht: SrcLoc;
+	};
 	export type NameInfo = {
 		before: SrcLoc;
 		text: string;
@@ -276,6 +280,49 @@ export namespace analyzer {
 		}
 	}
 	export type RoutineInfo = RoutineInfo.INC | RoutineInfo.INT | RoutineInfo.MAC;
+	export type ParseErr = {
+		range: Range;
+		message: string;
+	};
+	export namespace AnalysisErr {
+		export const p = "P" as const;
+		export type P = { readonly tag: typeof p; readonly value: ParseErr } & _common;
+		export function P(value: ParseErr): P {
+			return new VariantImpl(p, value) as P;
+		}
+
+		export type _tt = typeof p;
+		export type _vt = ParseErr;
+		type _common = Omit<VariantImpl, "tag" | "value">;
+		export function _ctor(t: _tt, v: _vt): AnalysisErr {
+			return new VariantImpl(t, v) as AnalysisErr;
+		}
+		class VariantImpl {
+			private readonly _tag: _tt;
+			private readonly _value: _vt;
+			constructor(t: _tt, value: _vt) {
+				this._tag = t;
+				this._value = value;
+			}
+			get tag(): _tt {
+				return this._tag;
+			}
+			get value(): _vt {
+				return this._value;
+			}
+			isP(): this is P {
+				return this._tag === AnalysisErr.p;
+			}
+		}
+	}
+	export type AnalysisErr = AnalysisErr.P;
+	export namespace AnalysisErr {
+		export class Error_ extends $wcm.ResultError<AnalysisErr> {
+			constructor(cause: AnalysisErr) {
+				super(`AnalysisErr: ${cause}`, cause);
+			}
+		}
+	}
 	export type Imports = {};
 	export namespace Imports {
 		export type Promisified = $wcm.$imports.Promisify<Imports>;
@@ -285,11 +332,11 @@ export namespace analyzer {
 	}
 	export type Exports = {
 		/**
-		 * @throws $wcm.wstring.Error
+		 * @throws AnalysisErr.Error_
 		 */
 		analyzeCls: (path: string, src: string) => ClassInfo;
 		/**
-		 * @throws $wcm.wstring.Error
+		 * @throws AnalysisErr.Error_
 		 */
 		analyzeRtn: (path: string, src: string) => RoutineInfo;
 	};
@@ -305,6 +352,10 @@ export namespace analyzer.$ {
 	export const SrcLoc = new $wcm.RecordType<SrcLoc>([
 		["ln", $wcm.u8],
 		["cn", $wcm.u8],
+	]);
+	export const Range = new $wcm.RecordType<Range>([
+		["lft", SrcLoc],
+		["rht", SrcLoc],
 	]);
 	export const NameInfo = new $wcm.RecordType<NameInfo>([
 		["before", SrcLoc],
@@ -373,6 +424,14 @@ export namespace analyzer.$ {
 		],
 		analyzer.RoutineInfo._ctor,
 	);
+	export const ParseErr = new $wcm.RecordType<ParseErr>([
+		["range", Range],
+		["message", $wcm.wstring],
+	]);
+	export const AnalysisErr = new $wcm.VariantType<AnalysisErr, AnalysisErr._tt, AnalysisErr._vt>(
+		[["P", ParseErr]],
+		analyzer.AnalysisErr._ctor,
+	);
 	export namespace exports {
 		export const analyzeCls = new $wcm.FunctionType<analyzer.Exports["analyzeCls"]>(
 			"analyze-cls",
@@ -380,7 +439,11 @@ export namespace analyzer.$ {
 				["path", $wcm.wstring],
 				["src", $wcm.wstring],
 			],
-			new $wcm.ResultType<analyzer.ClassInfo, string>(ClassInfo, $wcm.wstring, $wcm.wstring.Error),
+			new $wcm.ResultType<analyzer.ClassInfo, analyzer.AnalysisErr>(
+				ClassInfo,
+				AnalysisErr,
+				analyzer.AnalysisErr.Error_,
+			),
 		);
 		export const analyzeRtn = new $wcm.FunctionType<analyzer.Exports["analyzeRtn"]>(
 			"analyze-rtn",
@@ -388,7 +451,11 @@ export namespace analyzer.$ {
 				["path", $wcm.wstring],
 				["src", $wcm.wstring],
 			],
-			new $wcm.ResultType<analyzer.RoutineInfo, string>(RoutineInfo, $wcm.wstring, $wcm.wstring.Error),
+			new $wcm.ResultType<analyzer.RoutineInfo, analyzer.AnalysisErr>(
+				RoutineInfo,
+				AnalysisErr,
+				analyzer.AnalysisErr.Error_,
+			),
 		);
 	}
 }
@@ -410,14 +477,14 @@ export namespace analyzer._ {
 			path_len: i32,
 			src_ptr: i32,
 			src_len: i32,
-			result: ptr<result<ClassInfo, string>>,
+			result: ptr<result<ClassInfo, AnalysisErr>>,
 		) => void;
 		"analyze-rtn": (
 			path_ptr: i32,
 			path_len: i32,
 			src_ptr: i32,
 			src_len: i32,
-			result: ptr<result<RoutineInfo, string>>,
+			result: ptr<result<RoutineInfo, AnalysisErr>>,
 		) => void;
 	};
 	export function bind(
