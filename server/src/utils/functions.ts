@@ -3031,12 +3031,12 @@ export async function getParsedDocument(uri: string): Promise<compressedline[] |
 	return new Promise(waitForTokens);
 }
 
-export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | undefined> {
+export async function getAnalyzedDocument(uri: string): Promise<ClassInfo | { error: string } | undefined> {
 	if (!analyzedDocuments.has(uri)) {
 		return undefined;
 	}
 	const start = Date.now();
-	function wait(resolve: (value: ClassInfo | undefined) => void) {
+	function wait(resolve: (value: ClassInfo | { error: string }) => void) {
 		const result = analyzedDocuments.get(uri);
 		if (result != undefined || Date.now() - start >= 5000) {
 			resolve(result);

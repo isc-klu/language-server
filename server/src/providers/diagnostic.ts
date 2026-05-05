@@ -67,6 +67,15 @@ export async function onDiagnostics(params: DocumentDiagnosticParams): Promise<D
 	const settings = await getLanguageServerSettings(doc.uri);
 	const diagnostics: Diagnostic[] = [];
 
+	if ("error" in analyzed) {
+		diagnostics.push({
+			severity: DiagnosticSeverity.Warning,
+			range: Range.create(0, 0, 0, 0),
+			message: "Could not parse document: " + analyzed.error,
+			source: "InterSystems Language Server",
+		});
+	}
+
 	/** Check if syntax errors should be reported for `language`. */
 	const reportSyntaxErrors = (language: number): boolean => {
 		return !(<string[]>settings.diagnostics.suppressSyntaxErrors).includes(

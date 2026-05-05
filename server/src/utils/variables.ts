@@ -11,7 +11,7 @@ export const parsedDocuments: Map<string, compressedline[] | undefined> = new Ma
 /**
  * TextDocument URI's mapped to the analyzed representation of the document.
  */
-export const analyzedDocuments: Map<string, ClassInfo | undefined> = new Map();
+export const analyzedDocuments: Map<string, ClassInfo | { error: string }> = new Map();
 
 export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 	for (const [uri, cls] of getAnalyzedClasses()) {
@@ -24,7 +24,7 @@ export function getAnalyzedClass(name: string): [string, ClassInfo] | null {
 
 export function* getAnalyzedClasses(): Generator<[string, ClassInfo]> {
 	for (const [uri, info] of analyzedDocuments) {
-		if (info) {
+		if (!("error" in info)) {
 			yield [uri, info];
 		}
 	}

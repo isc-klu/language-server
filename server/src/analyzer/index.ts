@@ -30,11 +30,12 @@ export type ClassInfo = analyzer.ClassInfo;
 
 const wasm = loadAnalyzer();
 
-export async function analyzeCls(path: string, src: string): Promise<ClassInfo | undefined> {
+export type AnalyzeResult = ClassInfo | { error: string };
+
+export async function analyzeCls(path: string, src: string): Promise<AnalyzeResult> {
 	try {
 		return (await wasm).analyzeCls(path, src);
-	} catch (err) {
-		console.log(err);
-		return undefined;
+	} catch (error) {
+		return { error: error as string };
 	}
 }
