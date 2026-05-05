@@ -63,6 +63,7 @@ import storageKeywords from "../documentation/keywords/Storage.json";
 import triggerKeywords from "../documentation/keywords/Trigger.json";
 import xdataKeywords from "../documentation/keywords/XData.json";
 import { TextDocument } from "vscode-languageserver-textdocument";
+import { localInfoPrefix } from "./hover";
 
 /**
  * ServerSpec's mapped to the XML assist schema cache for that server.
@@ -579,21 +580,27 @@ async function completionFullClassName(
 ): Promise<CompletionItem[]> {
 	const result: CompletionItem[] = [];
 
-	// Get the list of imports for resolution
-	const imports = await getImports(doc, parsed, line, server);
-
 	// Add locally available classes
 	const added = new Set<string>();
 	for (const [uri, cls] of getAnalyzedClasses()) {
 		added.add(cls.name.text);
-		const item = makeClassCompletionItem(imports, cls.name.text, uri, cls.deprecated);
+		const item = makeClassCompletionItem(
+			[] /* I tried getImports() but it gives false imports */,
+			cls.name.text,
+			uri,
+			cls.deprecated,
+		);
 		item.documentation = {
 			kind: MarkupKind.Markdown,
 			value: documaticHtmlToMarkdown(cls.doc),
 		};
+		item.insertText = item.label;
+		item.label = localInfoPrefix + item.label;
 		result.push(item);
 	}
 
+	// Get the list of imports for resolution
+	const imports = await getImports(doc, parsed, line, server);
 	// Get all classes
 	const querydata = {
 		query: `SELECT dcd.Name, dcd.Deprecated FROM %Library.RoutineMgr_StudioOpenDialog(?,?,?,?,?,?,?) AS sod, %Dictionary.ClassDefinition AS dcd WHERE sod.Name = dcd.Name||'.cls'${

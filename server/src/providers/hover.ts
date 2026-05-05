@@ -61,7 +61,7 @@ function markupValue(header: string, body?: string): string {
 	return body?.trim().length ? [header, "***", body].join("\n") : header;
 }
 
-const localInfoPrefix = `[📁] `;
+export const localInfoPrefix = `[📁] `;
 export async function onHover(params: TextDocumentPositionParams): Promise<Hover> {
 	const doc = documents.get(params.textDocument.uri);
 	if (doc === undefined) {
