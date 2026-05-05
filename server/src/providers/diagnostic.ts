@@ -7,6 +7,8 @@ import {
 	DocumentDiagnosticParams,
 	DocumentDiagnosticReport,
 	DocumentDiagnosticReportKind,
+	WorkspaceDiagnosticReport,
+	WorkspaceDocumentDiagnosticReport,
 } from "vscode-languageserver";
 
 import {
@@ -21,7 +23,7 @@ import {
 	isClassMember,
 	getAnalyzedDocument,
 } from "../utils/functions";
-import { zutilFunctions, lexerLanguages, documents } from "../utils/variables";
+import { zutilFunctions, lexerLanguages, documents, analyzedDocuments } from "../utils/variables";
 import { ServerSpec, StudioOpenDialogFile, QueryData } from "../utils/types";
 import * as ld from "../utils/languageDefinitions";
 import parameterTypes from "../documentation/parameterTypes.json";
@@ -1462,4 +1464,28 @@ export async function onDiagnostics(params: DocumentDiagnosticParams): Promise<D
 		kind: DocumentDiagnosticReportKind.Full,
 		items: diagnostics,
 	};
+}
+
+export async function onWorkspaceDiagnostics(): Promise<WorkspaceDiagnosticReport> {
+	const items: WorkspaceDocumentDiagnosticReport[] = [];
+	const uris = [...analyzedDocuments.keys()];
+	for (const uri of uris) {
+		const res = await getAnalyzedDocument(uri);
+		if ("error" in res) {
+			items.push({
+				kind: "full",
+				uri,
+				version: null,
+				items: [
+					{
+						severity: DiagnosticSeverity.Error,
+						range: Range.create(0, 0, 0, 0),
+						message: "From workspace: " + res.error,
+						source: "InterSystems Language Server",
+					},
+				],
+			});
+		}
+	}
+	return { items };
 }

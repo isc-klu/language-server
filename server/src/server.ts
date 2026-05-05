@@ -30,7 +30,7 @@ import { onHover } from "./providers/hover";
 import { onCompletion, onCompletionResolve, schemaCaches } from "./providers/completion";
 import { onSignatureHelp } from "./providers/signatureHelp";
 import { onDocumentFormatting, onDocumentRangeFormatting } from "./providers/formatting";
-import { onDiagnostics } from "./providers/diagnostic";
+import { onDiagnostics, onWorkspaceDiagnostics } from "./providers/diagnostic";
 import { onSemanticTokens, onSemanticTokensDelta } from "./providers/semanticTokens";
 
 import { LanguageServerConfiguration, ServerSpec } from "./utils/types";
@@ -87,7 +87,7 @@ connection.onInitialize((params) => {
 			typeHierarchyProvider: true,
 			diagnosticProvider: {
 				interFileDependencies: false,
-				workspaceDiagnostics: false,
+				workspaceDiagnostics: true,
 			},
 		},
 	};
@@ -242,6 +242,8 @@ connection.onRequest("intersystems/embedded/languageAtPosition", languageAtPosit
 connection.onRequest("intersystems/embedded/isolateEmbeddedLanguage", isolateEmbeddedLanguage);
 
 connection.languages.diagnostics.on(onDiagnostics);
+
+connection.languages.diagnostics.onWorkspace(onWorkspaceDiagnostics);
 
 documents.listen(connection);
 
