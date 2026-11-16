@@ -97,8 +97,8 @@
         },
         "intersystems.language-server.ascot.style": {
           "type": "string",
-          "default": ".ascot/style.json",
-          "markdownDescription": "The ascot style file of a workspace folder, a path relative to the folder: the rules its code is checked against, in the format of ascot's [STYLE.md](https://github.com/intersystems-community/ascot/blob/main/STYLE.md). No style is checked without the file.",
+          "default": "",
+          "markdownDescription": "The ascot style file of a workspace folder, a path relative to the folder (for example `.ascot/style.json`): the rules its code is checked against, in the format of ascot's [STYLE.md](https://github.com/intersystems-community/ascot/blob/main/STYLE.md). Empty, the default, checks no style.",
           "scope": "resource"
         },
         "intersystems.language-server.formatting.commands.case": {
