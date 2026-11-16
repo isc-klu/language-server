@@ -103,6 +103,19 @@ const resolvedServerSpecs = new (class {
 	}
 })();
 
+/** `server` as the language server gets it: credentials stay in `resolvedServerSpecs`, off the LSP channel and its trace. */
+function withoutCredentials(server: ServerSpec): ServerSpec {
+	const copy: ServerSpec & { password?: string } = { ...server };
+	delete copy.credentials;
+	delete copy.password;
+	return copy;
+}
+
+/** `server` with the credentials `resolvedServerSpecs` holds for it, for making a request on the language server's behalf. */
+function withCredentials(server: ServerSpec): ServerSpec {
+	return { ...server, credentials: resolvedServerSpecs.list(server)[0]?.credentials };
+}
+
 export async function activate(context: ExtensionContext) {
 	// Get the main extension exported API
 	const objectScriptExt = extensions.getExtension("intersystems-community.vscode-objectscript")!;
@@ -265,7 +278,10 @@ export async function activate(context: ExtensionContext) {
 	const textDecoder = new TextDecoder();
 	context.subscriptions.push(
 		// Register custom request handlers
-		client.onRequest("intersystems/server/resolveFromUri", (uri) => resolveServerSpec(Uri.parse(uri))),
+		client.onRequest("intersystems/server/resolveFromUri", async (uri) => {
+			const server = await resolveServerSpec(Uri.parse(uri));
+			return server && withoutCredentials(server);
+		}),
 		client.onRequest("intersystems/uri/localToVirtual", (uri) => {
 			const newuri: Uri = objectScriptApi.serverDocumentUriForUri(Uri.parse(uri));
 			return newuri.toString();
@@ -290,10 +306,11 @@ export async function activate(context: ExtensionContext) {
 		client.onRequest("intersystems/server/makeRESTRequest", async (args) => {
 			// As of version 2.0.0, REST requests are made on the client side
 			const doc = args.method == "GET" && args.path.startsWith("/doc/");
+			const server = withCredentials(args.server);
 			return (
 				doc
-					? getDoc(args.path.slice("/doc/".length), args.server, args.params)
-					: makeRESTRequest(args.method, args.api, args.path, args.server, args.data, args.checksum, args.params)
+					? getDoc(args.path.slice("/doc/".length), server, args.params)
+					: makeRESTRequest(args.method, args.api, args.path, server, args.data, args.checksum, args.params)
 			).then((respdata) => {
 				if (respdata) {
 					// Can't return the entire AxiosResponse object because it's not JSON.stringify-able due to circularity
@@ -323,7 +340,7 @@ export async function activate(context: ExtensionContext) {
 								.get<boolean>("multilineMethodArgs")
 								? { format: "udl-multiline" }
 								: undefined;
-						const resp = await getDoc(fileName, params.server, docParams);
+						const resp = await getDoc(fileName, withCredentials(params.server), docParams);
 						return resp?.data?.result?.content || [];
 					} else {
 						// Read the contents of the file at uri
