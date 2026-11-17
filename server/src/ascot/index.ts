@@ -285,6 +285,10 @@ function toSymbol({ name, kind, deprecated }: SymbolInfo | WorkspaceSymbol) {
 	};
 }
 
+// Whether the folder's documents are served by an IRIS instance, whose own workspace symbols the
+// ObjectScript extension already lists.
+export const hasServer = (folder: string) => typeof ateliers.get(folder)?.lastServer === "string";
+
 export const getWorkspaceSymbol = (folder: string, query: string) =>
 	withWorkspace(folder, [] as SymbolInformation[], async (w) =>
 		(await w.workspaceSymbol(query)).map((s) => ({
