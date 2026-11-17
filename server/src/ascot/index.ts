@@ -80,7 +80,7 @@ let pending: string[] | undefined = [];
 let seq = 0;
 
 export async function refreshTrace(): Promise<void> {
-	tracing = (await connection.workspace.getConfiguration("intersystems.language-server.ascot.trace")) === true;
+	tracing = (await connection.workspace.getConfiguration("intersystems.language-server.trace.ascot")) === "on";
 	if (tracing) pending?.forEach((line) => connection.console.log(line));
 	pending = undefined;
 }
