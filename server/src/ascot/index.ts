@@ -28,8 +28,6 @@ class RestAtelier extends Atelier {
 	noServerUntil = 0;
 	/** The server the lookups were answered by, `null` for none; `undefined` before any lookup. */
 	lastServer?: string | null;
-	/** Whether the folder checks against the declarations bundled with ascot, for want of a server. */
-	bundled = false;
 
 	constructor(private readonly folder: string) {
 		super();
@@ -48,9 +46,10 @@ class RestAtelier extends Atelier {
 
 	private async server(): Promise<ServerSpec> {
 		const server = await this.resolve();
+		const was = this.lastServer;
 		this.lastServer = serverKey(server);
 		if (!server) {
-			void useBundled(this.folder, this);
+			if (was !== null) void useBundled(this.folder);
 			throw new Error(`no server connection for ${this.folder}`);
 		}
 		return server;
@@ -182,16 +181,13 @@ export async function onConfigurationChanged(): Promise<void> {
 		const key = serverKey(await atelier.resolve());
 		if (key === atelier.lastServer) continue;
 		atelier.lastServer = key;
-		atelier.bundled = key === null;
 		await (await workspaces.get(folder)!).setEnv(key === null ? "latest" : atelier);
 	}
 }
 
 // The first lookup that finds no server switches the folder to the bundled declarations, rather
 // than taking every system class on trust; the switch stales every analysis, hence the refresh.
-async function useBundled(folder: string, atelier: RestAtelier): Promise<void> {
-	if (atelier.bundled) return;
-	atelier.bundled = true;
+async function useBundled(folder: string): Promise<void> {
 	await (await workspaces.get(folder)!).setEnv("latest");
 	connection.languages.diagnostics.refresh();
 }
