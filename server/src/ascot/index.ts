@@ -72,6 +72,12 @@ class RestAtelier extends Atelier {
 		const lines = resp.data?.result?.content;
 		return Array.isArray(lines) ? lines.join("\n") : undefined;
 	}
+
+	async docUri(name: string): Promise<string | undefined> {
+		if (!(await this.resolve())) return undefined;
+		const uri: string | null = await connection.sendRequest("intersystems/uri/forDocument", name);
+		return uri || undefined;
+	}
 }
 
 // The trace setting can't be read until `initialized`, after the startup scan; buffer until then.
