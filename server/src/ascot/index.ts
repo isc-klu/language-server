@@ -139,6 +139,28 @@ export function setStartupScan(scan: Promise<void>): void {
 	scanned = scan.then(() => trace(`startup scan finished after ${Date.now() - start}ms`));
 }
 
+// A folder with at most `ascot.eagerCheckLimit` documents has every one checked once the scan is
+// done, between requests, so references and workspace symbols cover the whole folder.
+export async function checkEagerly(): Promise<void> {
+	await scanned;
+	for (const [folder, uris] of scannedDocs) {
+		const limit: number = await connection.workspace.getConfiguration({
+			scopeUri: folder,
+			section: "intersystems.language-server.ascot.eagerCheckLimit",
+		});
+		if (uris.length > limit) {
+			trace(`${folder}: ${uris.length} documents, more than the eager check limit of ${limit}`);
+			continue;
+		}
+		const start = Date.now();
+		for (const uri of uris) {
+			await getDiagnostics(uri);
+			await new Promise((resolve) => setImmediate(resolve));
+		}
+		trace(`${folder}: ${uris.length} documents checked eagerly in ${Date.now() - start}ms`);
+	}
+}
+
 function serverKey(server: ServerSpec | undefined): string | null {
 	return server ? `${server.username}@${server.host}:${server.port}${server.pathPrefix}/${server.namespace}` : null;
 }
@@ -228,8 +250,11 @@ async function workspaceOfDoc(uri: string): Promise<Workspace> {
 }
 
 // Open and edit alike; returns the uris whose analysis this made stale, this one included.
+const scannedDocs = new Map<string, string[]>();
+
 export async function openDoc(uri: string, text: string, folder?: string): Promise<string[]> {
 	try {
+		if (folder) (scannedDocs.get(folder) ?? scannedDocs.set(folder, []).get(folder)!).push(uri);
 		const workspace = await (folder ? workspaceOfFolder(folder) : workspaceOfDoc(uri));
 		return await workspace.open(uri, text);
 	} catch (error) {

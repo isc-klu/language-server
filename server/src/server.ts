@@ -37,7 +37,15 @@ import { onSemanticTokens, onSemanticTokensDelta } from "./providers/semanticTok
 import { onReferences } from "./providers/references";
 import { onWorkspaceSymbol } from "./providers/workspaceSymbol";
 import { onInlayHint } from "./providers/inlayHint";
-import { openDoc, closeDoc, onConfigurationChanged, refreshStyles, refreshTrace, setStartupScan } from "./ascot";
+import {
+	checkEagerly,
+	openDoc,
+	closeDoc,
+	onConfigurationChanged,
+	refreshStyles,
+	refreshTrace,
+	setStartupScan,
+} from "./ascot";
 
 import { LanguageServerConfiguration, ServerSpec } from "./utils/types";
 import {
@@ -133,7 +141,7 @@ connection.onInitialized(() => {
 		watchers: [{ globPattern: "**/.ascot/style.json" }],
 	});
 	refreshTrace();
-	refreshStyles();
+	refreshStyles().then(checkEagerly);
 });
 
 connection.onDidChangeWatchedFiles(async () => {

@@ -15,7 +15,7 @@ This is a [LSP](https://microsoft.github.io/language-server-protocol/) compliant
 - Document symbols for ObjectScript classes, routines and include files.
 - Local analysis of ObjectScript classes, routines and include files by [ascot](https://github.com/intersystems-community/ascot), with or without a server connection:
   - Type-aware diagnostics beyond syntax: undefined variables, members a class doesn't have, argument counts and types, unreachable code, mistakes IRIS only reports at run time.
-  - [Find all references](https://code.visualstudio.com/docs/editor/editingevolved#_peek) to classes, members, variables and labels.
+  - [Find all references](https://code.visualstudio.com/docs/editor/editingevolved#_peek) to classes, members, variables and labels. A folder of at most 1,000 documents (`intersystems.language-server.ascot.eagerCheckLimit`) is analyzed whole after startup, so the results cover all of it; in a larger one they cover the documents analyzed so far.
   - [Workspace symbols](https://code.visualstudio.com/docs/editor/editingevolved#_open-symbol-by-name) for the classes, members, routines and labels of the open folders.
   - [Inlay hints](https://code.visualstudio.com/docs/editor/editingevolved#_inlay-hints) for the types of variables and call results.
   - Style rules for commands, functions, braces and spacing, from the folder's ascot style file once `intersystems.language-server.ascot.style` names it (for example `.ascot/style.json`), in the format of ascot's [STYLE.md](https://github.com/intersystems-community/ascot/blob/main/STYLE.md).

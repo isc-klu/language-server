@@ -99,6 +99,12 @@
           "default": "off",
           "description": "Traces the communication between the language server and ascot."
         },
+        "intersystems.language-server.ascot.eagerCheckLimit": {
+          "type": "number",
+          "default": 1000,
+          "markdownDescription": "A workspace folder with at most this many ObjectScript documents has every one analyzed after startup, so Find All References and workspace symbols cover the whole folder; a larger folder's documents are analyzed as they are opened or asked about. `0` analyzes none ahead of time.",
+          "scope": "resource"
+        },
         "intersystems.language-server.ascot.style": {
           "type": "string",
           "default": "",
