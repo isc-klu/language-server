@@ -11,7 +11,7 @@ const SECTION = "intersystems.language-server.ascot.iris";
 export async function irisOf(folder: string): Promise<{ path: string; key: string } | undefined> {
 	const uri = URI.parse(folder);
 	const file: string | null = await connection.workspace.getConfiguration({ scopeUri: folder, section: SECTION });
-	if (uri.scheme !== "file" || !file) return undefined;
+	if (uri.scheme !== "file" || typeof file !== "string" || !file) return undefined;
 	const resolved = path.resolve(uri.fsPath, file);
 	try {
 		const { mtimeMs, size } = fs.statSync(resolved);

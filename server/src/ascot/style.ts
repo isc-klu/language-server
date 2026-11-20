@@ -11,7 +11,7 @@ const SECTION = "intersystems.language-server.ascot.style";
 export async function styleOf(folder: string): Promise<Style | undefined> {
 	const uri = URI.parse(folder);
 	const file: string | null = await connection.workspace.getConfiguration({ scopeUri: folder, section: SECTION });
-	if (uri.scheme !== "file" || !file) return undefined;
+	if (uri.scheme !== "file" || typeof file !== "string" || !file) return undefined;
 	let text: string;
 	try {
 		text = fs.readFileSync(path.resolve(uri.fsPath, file), "utf-8");
