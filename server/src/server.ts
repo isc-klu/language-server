@@ -42,7 +42,7 @@ import {
 	openDoc,
 	closeDoc,
 	onConfigurationChanged,
-	refreshStyles,
+	refreshSettings,
 	refreshTrace,
 	setStartupScan,
 } from "./ascot";
@@ -141,11 +141,11 @@ connection.onInitialized(() => {
 		watchers: [{ globPattern: "**/.ascot/style.json" }],
 	});
 	refreshTrace();
-	refreshStyles().then(checkEagerly);
+	refreshSettings().then(checkEagerly);
 });
 
 connection.onDidChangeWatchedFiles(async () => {
-	await refreshStyles();
+	await refreshSettings();
 	connection.languages.diagnostics.refresh();
 });
 

@@ -2,6 +2,7 @@ import {
 	Atelier,
 	createWorkspace,
 	type ClassInfo,
+	type Env,
 	type InlayHint,
 	type Location,
 	type MemberInfo,
@@ -15,6 +16,8 @@ import { Diagnostic, DiagnosticSeverity, SymbolInformation, SymbolKind, SymbolTa
 import { connection } from "../utils/variables";
 import { getServerSpec, makeRESTRequest } from "../utils/functions";
 import { ServerSpec } from "../utils/types";
+import * as fs from "node:fs";
+import { irisOf } from "./iris";
 import { styleOf } from "./style";
 
 export type { MemberInfo } from "@intersystems-community/ascot";
@@ -49,7 +52,7 @@ class RestAtelier extends Atelier {
 		const was = this.lastServer;
 		this.lastServer = serverKey(server);
 		if (!server) {
-			if (was !== null) void useBundled(this.folder);
+			if (was !== null) void applyEnv(this.folder);
 			throw new Error(`no server connection for ${this.folder}`);
 		}
 		return server;
@@ -125,6 +128,7 @@ function describe(values: unknown[]): string {
 			if (typeof v === "string") {
 				return v.length > 80 ? `<${v.length} chars>` : v.slice(v.lastIndexOf("/") + 1);
 			}
+			if (v instanceof Uint8Array) return `<${v.byteLength} bytes>`;
 			const json = JSON.stringify(v, (_, x) =>
 				x && typeof x === "object" && "line" in x ? `${x.line}:${x.character}` : x,
 			);
@@ -170,25 +174,35 @@ function serverKey(server: ServerSpec | undefined): string | null {
 	return server ? `${server.username}@${server.host}:${server.port}${server.pathPrefix}/${server.namespace}` : null;
 }
 
-// A folder whose server changed gets a new env, which stales every analysis so ascot asks it again.
-// Without a server, the env is the declarations of the newest IRIS release bundled with ascot.
+// A folder whose server changed gets new sources, which stales every analysis so ascot asks again.
 export async function onConfigurationChanged(): Promise<void> {
 	refreshTrace();
-	await refreshStyles();
+	for (const atelier of ateliers.values()) atelier.noServerUntil = 0;
+	await refreshSettings();
 	for (const [folder, atelier] of ateliers) {
-		atelier.noServerUntil = 0;
 		if (atelier.lastServer === undefined) continue;
 		const key = serverKey(await atelier.resolve());
 		if (key === atelier.lastServer) continue;
 		atelier.lastServer = key;
-		await (await workspaces.get(folder)!).setEnv(key === null ? "latest" : atelier);
+		await applyEnv(folder);
 	}
 }
 
-// The first lookup that finds no server switches the folder to the bundled declarations, rather
-// than taking every system class on trust; the switch stales every analysis, hence the refresh.
-async function useBundled(folder: string): Promise<void> {
-	await (await workspaces.get(folder)!).setEnv("latest");
+// A folder's sources, asked in order: its declaration file, then its server for what the file
+// lacks; a lookup that found no server drops it, and a folder with neither has the declarations of
+// the newest IRIS release bundled with ascot, rather than taking every system class on trust.
+function sourcesOf(folder: string): Env[] {
+	const iris = irises.get(folder);
+	const atelier = ateliers.get(folder)!;
+	const sources: Env[] = iris ? [fs.readFileSync(iris.path)] : [];
+	if (atelier.lastServer !== null) sources.push(atelier);
+	else if (!iris) sources.push("latest");
+	return sources;
+}
+
+// New sources stale every analysis, hence the refresh.
+async function applyEnv(folder: string): Promise<void> {
+	await (await workspaces.get(folder)!).setEnv(sourcesOf(folder));
 	connection.languages.diagnostics.refresh();
 }
 
@@ -196,11 +210,35 @@ const workspaces = new Map<string, Promise<Workspace>>();
 const ateliers = new Map<string, RestAtelier>();
 // Each folder's style as last applied, as JSON, so an unchanged one doesn't stale every analysis.
 const styles = new Map<string, string>();
+// Each folder's declaration file as last applied, by path and content, for the folders that have one.
+const irises = new Map<string, { key: string; path: string }>();
 
-// The style rules of every folder, from its settings; configuration can only be read once the
-// client is initialized, so the startup scan runs without and `onInitialized` applies them.
-export async function refreshStyles(): Promise<void> {
-	for (const folder of workspaces.keys()) await applyStyle(folder);
+// The style rules and declaration file of every folder, from its settings; configuration can only
+// be read once the client is initialized, so the startup scan runs without and `onInitialized`
+// applies them.
+export async function refreshSettings(): Promise<void> {
+	for (const folder of workspaces.keys()) {
+		await applyStyle(folder);
+		await applyIris(folder);
+	}
+}
+
+// A declaration file leads the folder's sources once named, and leaves them when the setting goes;
+// one ascot cannot read is refused by `setEnv`, reported, and the sources in force stay.
+async function applyIris(folder: string): Promise<void> {
+	const iris = await irisOf(folder);
+	if (iris?.key === irises.get(folder)?.key) return;
+	const was = irises.get(folder);
+	try {
+		if (iris) irises.set(folder, iris);
+		else irises.delete(folder);
+		await applyEnv(folder);
+	} catch (error) {
+		if (was) irises.set(folder, was);
+		else irises.delete(folder);
+		if (!(error instanceof Unavailable))
+			connection.console.error(`[ascot] the declaration file of ${folder}: ${error}`);
+	}
 }
 
 async function applyStyle(folder: string): Promise<void> {
@@ -239,8 +277,13 @@ function workspaceOfFolder(folder: string): Promise<Workspace> {
 		// Handled here so a failure never surfaces as an unhandled rejection, which ends the server.
 		workspace.catch(() => {});
 		workspaces.set(folder, workspace);
-		// A folder first met after initialization gets its style now; earlier ones, at `onInitialized`.
-		if (tracing !== undefined) workspace.then(() => applyStyle(folder)).catch(() => {});
+		// A folder first met after initialization gets its settings now; earlier ones, at `onInitialized`.
+		if (tracing !== undefined) {
+			workspace
+				.then(() => applyStyle(folder))
+				.then(() => applyIris(folder))
+				.catch(() => {});
+		}
 	}
 	return workspace;
 }
