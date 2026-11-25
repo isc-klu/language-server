@@ -170,8 +170,9 @@ connection.onDidChangeConfiguration(async () => {
 	);
 	configs.forEach((config, index) => languageServerSettings.set(uris[index], config));
 
-	// Update diagnostics for all open documents
+	// Update diagnostics and inlay hints for all open documents
 	connection.languages.diagnostics.refresh();
+	connection.languages.inlayHint.refresh();
 });
 
 documents.onDidClose(async (e) => {

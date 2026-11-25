@@ -105,6 +105,18 @@
           "markdownDescription": "A workspace folder with at most this many ObjectScript documents has every one analyzed after startup, so Find All References and workspace symbols cover the whole folder; a larger folder's documents are analyzed as they are opened or asked about. `0` analyzes none ahead of time.",
           "scope": "resource"
         },
+        "intersystems.language-server.ascot.diagnostics": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Which ascot diagnostics a workspace folder reports, in the syntax of `ascot analyze -d` ([Diagnostics Filter](https://github.com/intersystems-community/ascot#diagnostics-filter)): entries separated by spaces and applied in order, each `off`, `on` or a severity (`error`, `warning`, `information` or `hint`), a colon, and comma-separated targets, codes such as `A6826`, severities or `all` (for example `off:A6826`, `off:warning` or `off:all on:error`). Empty, the default, reports every diagnostic at its own severity.",
+          "scope": "resource"
+        },
+        "intersystems.language-server.ascot.inlayHints": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether ascot's inlay hints, the types of variables and call results, are shown in a workspace folder.",
+          "scope": "resource"
+        },
         "intersystems.language-server.ascot.declarations": {
           "type": "string",
           "default": "",

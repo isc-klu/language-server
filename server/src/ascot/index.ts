@@ -212,6 +212,8 @@ const ateliers = new Map<string, RestAtelier>();
 const styles = new Map<string, string>();
 // Each folder's declaration file as last applied, by path and content, for the folders that have one.
 const declarationFiles = new Map<string, { key: string; path: string }>();
+// Each folder's diagnostics filter as last applied, so an unchanged one doesn't stale every analysis.
+const filters = new Map<string, string>();
 
 // The style rules and declaration file of every folder, from its settings; configuration can only
 // be read once the client is initialized, so the startup scan runs without and `onInitialized`
@@ -220,6 +222,7 @@ export async function refreshSettings(): Promise<void> {
 	for (const folder of workspaces.keys()) {
 		await applyStyle(folder);
 		await applyDeclarations(folder);
+		await applyDiagnostics(folder);
 	}
 }
 
@@ -238,6 +241,24 @@ async function applyDeclarations(folder: string): Promise<void> {
 		else declarationFiles.delete(folder);
 		if (!(error instanceof Unavailable))
 			connection.console.error(`[ascot] the declaration file of ${folder}: ${error}`);
+	}
+}
+
+async function applyDiagnostics(folder: string): Promise<void> {
+	const setting: unknown = await connection.workspace.getConfiguration({
+		scopeUri: folder,
+		section: "intersystems.language-server.ascot.diagnostics",
+	});
+	const filter = typeof setting === "string" ? setting : "";
+	if ((filters.get(folder) ?? "") === filter) return;
+	filters.set(folder, filter);
+	try {
+		await (await workspaces.get(folder)!).setDiagnostics([filter]);
+		connection.languages.diagnostics.refresh();
+	} catch (error) {
+		// A value outside ascot's syntax, say `off:A1`: reported, and the old filter stays.
+		if (!(error instanceof Unavailable))
+			connection.console.error(`[ascot] the diagnostics setting of ${folder}: ${error}`);
 	}
 }
 
@@ -278,6 +299,7 @@ function workspaceOfFolder(folder: string): Promise<Workspace> {
 			workspace
 				.then(() => applyStyle(folder))
 				.then(() => applyDeclarations(folder))
+				.then(() => applyDiagnostics(folder))
 				.catch(() => {});
 		}
 	}
@@ -315,8 +337,14 @@ async function withWorkspace<T>(uri: string, empty: T, fn: (workspace: Workspace
 
 export const closeDoc = (uri: string) => withWorkspace(uri, [] as string[], (w) => w.close(uri));
 
-export const inlayHint = (uri: string, range: Range) =>
-	withWorkspace(uri, [] as InlayHint[], (w) => w.inlayHint(uri, range));
+export async function inlayHint(uri: string, range: Range): Promise<InlayHint[]> {
+	const shown: boolean = await connection.workspace.getConfiguration({
+		scopeUri: uri,
+		section: "intersystems.language-server.ascot.inlayHints",
+	});
+	if (shown === false) return [];
+	return withWorkspace(uri, [] as InlayHint[], (w) => w.inlayHint(uri, range));
+}
 
 export const getDefinition = (uri: string, position: Position) =>
 	withWorkspace<Location | undefined>(uri, undefined, (w) => w.definition(uri, position));
