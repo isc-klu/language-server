@@ -17,7 +17,7 @@ import { connection } from "../utils/variables";
 import { getServerSpec, makeRESTRequest } from "../utils/functions";
 import { ServerSpec } from "../utils/types";
 import * as fs from "node:fs";
-import { irisOf } from "./iris";
+import { declarationsOf } from "./declarations";
 import { styleOf } from "./style";
 
 export type { MemberInfo } from "@intersystems-community/ascot";
@@ -191,18 +191,18 @@ export async function onConfigurationChanged(): Promise<void> {
 // A folder's sources, asked in order: its declaration file, then its server for what the file
 // lacks; a lookup that found no server drops it, and a folder with neither has the declarations of
 // the newest IRIS release bundled with ascot, rather than taking every system class on trust.
-function sourcesOf(folder: string): Env[] {
-	const iris = irises.get(folder);
+async function sourcesOf(folder: string): Promise<Env[]> {
+	const file = declarationFiles.get(folder);
 	const atelier = ateliers.get(folder)!;
-	const sources: Env[] = iris ? [fs.readFileSync(iris.path)] : [];
+	const sources: Env[] = file ? [await fs.promises.readFile(file.path)] : [];
 	if (atelier.lastServer !== null) sources.push(atelier);
-	else if (!iris) sources.push("latest");
+	else if (!file) sources.push("latest");
 	return sources;
 }
 
 // New sources stale every analysis, hence the refresh.
 async function applyEnv(folder: string): Promise<void> {
-	await (await workspaces.get(folder)!).setEnv(sourcesOf(folder));
+	await (await workspaces.get(folder)!).setEnv(await sourcesOf(folder));
 	connection.languages.diagnostics.refresh();
 }
 
@@ -211,7 +211,7 @@ const ateliers = new Map<string, RestAtelier>();
 // Each folder's style as last applied, as JSON, so an unchanged one doesn't stale every analysis.
 const styles = new Map<string, string>();
 // Each folder's declaration file as last applied, by path and content, for the folders that have one.
-const irises = new Map<string, { key: string; path: string }>();
+const declarationFiles = new Map<string, { key: string; path: string }>();
 
 // The style rules and declaration file of every folder, from its settings; configuration can only
 // be read once the client is initialized, so the startup scan runs without and `onInitialized`
@@ -219,23 +219,23 @@ const irises = new Map<string, { key: string; path: string }>();
 export async function refreshSettings(): Promise<void> {
 	for (const folder of workspaces.keys()) {
 		await applyStyle(folder);
-		await applyIris(folder);
+		await applyDeclarations(folder);
 	}
 }
 
 // A declaration file leads the folder's sources once named, and leaves them when the setting goes;
 // one ascot cannot read is refused by `setEnv`, reported, and the sources in force stay.
-async function applyIris(folder: string): Promise<void> {
-	const iris = await irisOf(folder);
-	if (iris?.key === irises.get(folder)?.key) return;
-	const was = irises.get(folder);
+async function applyDeclarations(folder: string): Promise<void> {
+	const file = await declarationsOf(folder);
+	if (file?.key === declarationFiles.get(folder)?.key) return;
+	const was = declarationFiles.get(folder);
 	try {
-		if (iris) irises.set(folder, iris);
-		else irises.delete(folder);
+		if (file) declarationFiles.set(folder, file);
+		else declarationFiles.delete(folder);
 		await applyEnv(folder);
 	} catch (error) {
-		if (was) irises.set(folder, was);
-		else irises.delete(folder);
+		if (was) declarationFiles.set(folder, was);
+		else declarationFiles.delete(folder);
 		if (!(error instanceof Unavailable))
 			connection.console.error(`[ascot] the declaration file of ${folder}: ${error}`);
 	}
@@ -266,11 +266,7 @@ function workspaceOfFolder(folder: string): Promise<Workspace> {
 		workspace = createWorkspace(atelier).then(
 			(w) => traced(w, "→"),
 			(error) => {
-				const jspi =
-					typeof (WebAssembly as { Suspending?: unknown }).Suspending === "function"
-						? ""
-						: "; its WebAssembly needs JSPI, which this VS Code's Node.js lacks (Node.js 24 has it)";
-				connection.console.error(`[ascot] unavailable for ${folder}: ${error}${jspi}`);
+				connection.console.error(`[ascot] unavailable for ${folder}: ${error}`);
 				throw new Unavailable(String(error));
 			},
 		);
@@ -281,7 +277,7 @@ function workspaceOfFolder(folder: string): Promise<Workspace> {
 		if (tracing !== undefined) {
 			workspace
 				.then(() => applyStyle(folder))
-				.then(() => applyIris(folder))
+				.then(() => applyDeclarations(folder))
 				.catch(() => {});
 		}
 	}

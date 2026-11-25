@@ -105,10 +105,10 @@
           "markdownDescription": "A workspace folder with at most this many ObjectScript documents has every one analyzed after startup, so Find All References and workspace symbols cover the whole folder; a larger folder's documents are analyzed as they are opened or asked about. `0` analyzes none ahead of time.",
           "scope": "resource"
         },
-        "intersystems.language-server.ascot.iris": {
+        "intersystems.language-server.ascot.declarations": {
           "type": "string",
           "default": "",
-          "markdownDescription": "The ascot declaration file of a workspace folder, a path relative to the folder (for example `.ascot/iris-community-2026.2.d.json.gz`): the IRIS classes, routines and include files its code is checked against first, as `ascot declare` writes them or as an [ascot release](https://github.com/intersystems-community/ascot/releases) carries them, gzipped or not; what the file lacks comes from the folder's server connection. Empty, the default, checks against the server connection alone, or without one against the declarations of the newest IRIS release bundled with the extension.",
+          "markdownDescription": "The ascot declaration file of a workspace folder, a path relative to the folder (for example `.ascot/declarations.d.json.gz`): the IRIS classes, routines and include files its code is checked against first, as `ascot declare` writes them or as an [ascot release](https://github.com/intersystems-community/ascot/releases) carries them, gzipped or not; what the file lacks comes from the folder's server connection. Empty, the default, checks against the server connection alone, or without one against the declarations of the newest IRIS release bundled with the extension.",
           "scope": "resource"
         },
         "intersystems.language-server.ascot.style": {

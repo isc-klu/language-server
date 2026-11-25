@@ -4,7 +4,7 @@
   "author": "InterSystems Corporation",
   "private": true,
   "engines": {
-    "node": ">=16"
+    "node": ">=24"
   },
   "dependencies": {
     "@intersystems-community/ascot": "^0.8.0",

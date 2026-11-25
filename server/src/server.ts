@@ -68,13 +68,13 @@ connection.onInitialize((params) => {
 				for (const folder of params.workspaceFolders ?? []) {
 					const folderURI = URI.parse(folder.uri);
 					if (folderURI.scheme !== "file") continue;
-					for (const file of fs.readdirSync(folderURI.fsPath, { recursive: true, withFileTypes: true })) {
+					for (const file of await fs.promises.readdir(folderURI.fsPath, { recursive: true, withFileTypes: true })) {
 						if (!(file.isFile() && /\.(cls|mac|int|inc)$/i.test(file.name))) {
 							continue;
 						}
 						const filePath = path.join(file.parentPath, file.name);
 						const fileURI = URI.file(filePath).toString();
-						const fileString = fs.readFileSync(filePath, "utf-8");
+						const fileString = await fs.promises.readFile(filePath, "utf-8");
 						await openDoc(fileURI, fileString, folder.uri);
 					}
 				}
@@ -181,7 +181,7 @@ documents.onDidClose(async (e) => {
 	languageServerSettings.delete(e.document.uri);
 	// A close isn't a delete: other files still include or reference this one, so it stays in
 	// the ascot workspace at its on-disk content. Only a document with no file behind it goes.
-	const diskText = readWorkspaceFile(e.document.uri);
+	const diskText = await readWorkspaceFile(e.document.uri);
 	if (diskText !== undefined) {
 		await openDoc(e.document.uri, diskText);
 	} else {
@@ -193,11 +193,11 @@ documents.onDidClose(async (e) => {
 });
 
 /** The on-disk text of a `file:` document, or `undefined` if there is no such file. */
-function readWorkspaceFile(docURI: string): string | undefined {
+async function readWorkspaceFile(docURI: string): Promise<string | undefined> {
 	const uri = URI.parse(docURI);
 	if (uri.scheme !== "file") return undefined;
 	try {
-		return fs.readFileSync(uri.fsPath, "utf-8");
+		return await fs.promises.readFile(uri.fsPath, "utf-8");
 	} catch {
 		return undefined;
 	}

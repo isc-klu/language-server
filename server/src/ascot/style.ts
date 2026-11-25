@@ -14,7 +14,7 @@ export async function styleOf(folder: string): Promise<Style | undefined> {
 	if (uri.scheme !== "file" || typeof file !== "string" || !file) return undefined;
 	let text: string;
 	try {
-		text = fs.readFileSync(path.resolve(uri.fsPath, file), "utf-8");
+		text = await fs.promises.readFile(path.resolve(uri.fsPath, file), "utf-8");
 	} catch {
 		return undefined;
 	}
